@@ -72,7 +72,7 @@ bintray {
     pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
         repo = "maven"
         name = project.name
-        setLicenses("MIT")
+        setLicenses("Apache-2.0")
         vcsUrl = "https://github.com/notjustanna/tartar.git"
     })
 }
