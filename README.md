@@ -50,9 +50,8 @@ parsers to the grammar.
 
 To create a parser use `createParser(grammar) { ... }`, which will run the block of code on `parser.parse()`.
 
-
-
 #### Example code
+
 ```kotlin
 // Create a lexer as simple as a method call.
 val lexer: Lexer<Token<TokenType>> = createLexer {
@@ -83,8 +82,11 @@ val parser = createParser(grammar) { // Actual code run by the parser.
 }
 
 // One line of code to rule them all.
-val result = parser.parse(classpathSource { "input.str" }, lexer) // "tartar is awesome"
+val result = parser.parse(classpathSource { "input.str" }, lexer)
 ```
+
+See the full code [here](https://github.com/notjustanna/tartar/blob/master/src/test/java/examples/StringJoiner.kt),
+as well as other examples [here](https://github.com/notjustanna/tartar/tree/master/src/test/java/examples).
 
 ### Special thanks
 
