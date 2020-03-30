@@ -7,7 +7,7 @@ import net.notjustanna.tartar.api.parser.Token
 /**
  * Creates a section.
  */
-fun LexerContext<*>.section(offset: Int, length: Int = offset): Section {
+fun LexerContext<*>.section(offset: Int, length: Int = 0): Section {
     return Section(source, lineNumber, lineIndex - length - offset, length + offset)
 }
 

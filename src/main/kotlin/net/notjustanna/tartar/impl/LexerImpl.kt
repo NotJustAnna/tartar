@@ -18,8 +18,14 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
             while (ctx.hasNext()) {
                 ctx.read = 0
 
-                matcher.doMatch(ctx).onMatch?.invoke(ctx, ctx.curr)
-                    ?: throw SyntaxException("No matcher registered", ctx.section(ctx.read, ctx.read))
+                val function = matcher.doMatch(ctx).onMatch
+                if (function != null) {
+                    function(ctx, ctx.curr)
+                } else {
+                    matcher.skipUntilMatch(ctx)
+                    val section = ctx.section(ctx.read)
+                    throw SyntaxException("No matcher registered for '${section.substring}'", section)
+                }
 
                 if (ctx.read == 0) {
                     throw IllegalStateException("No further characters consumed.")
@@ -42,6 +48,14 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         fun tryMatchChild(char: Char): LexerMatcher<T>? {
             return trie[char] ?: predicates.firstOrNull { it.first(char) }?.second
         }
+    }
+
+    private tailrec fun LexerMatcher<*>.skipUntilMatch(ctx: ContextImpl) {
+        if (!ctx.hasNext()) return
+        val char = ctx.peek()
+        if (tryMatchChild(char) != null || char == '\n') return
+        ctx.next()
+        skipUntilMatch(ctx)
     }
 
     private tailrec fun LexerMatcher<T>.doMatch(ctx: ContextImpl, eat: Boolean = false): LexerMatcher<T> {
