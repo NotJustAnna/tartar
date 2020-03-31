@@ -33,9 +33,9 @@ fun main() {
     // Create a pratt-parser grammar. Dead simple.
     val grammar: Grammar<TokenType, String> = createGrammar {
         // Create a prefix parselet as a lambda function.
-        prefix(STRING) { token -> token.value.removeSurrounding("") }
+        prefix(STRING) { token -> token.value }
         // Create a infix parselet, with support to precedence as a lambda function.
-        infix(PLUS, 1) { left, token -> left + parseExpression() }
+        infix(PLUS, 1) { left, _ -> left + parseExpression() }
     }
 
     // Use your grammar to create a pratt-parser.
