@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-  compile 'pw.aru.libs:fakenetwork:VERSION'
+  compile 'com.github.adriantodt:tartar:VERSION'
 }
 ```
 
@@ -33,8 +33,8 @@ Using in Maven:
 
 <dependencies>
   <dependency>
-    <groupId>pw.aru.libs</groupId>
-    <artifactId>fakenetwork</artifactId>
+    <groupId>com.github.adriantodt</groupId>
+    <artifactId>tartar</artifactId>
     <version>VERSION</version>
   </dependency>
 </dependencies>
