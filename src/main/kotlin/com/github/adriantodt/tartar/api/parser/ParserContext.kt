@@ -1,5 +1,7 @@
 package com.github.adriantodt.tartar.api.parser
 
+import com.github.adriantodt.tartar.api.lexer.Source
+
 /**
  * A parsing context, created by a [Parser.parse] call, which exposes an interface for pratt-parsing.
  *
@@ -8,6 +10,11 @@ package com.github.adriantodt.tartar.api.parser
  * @author AdrianTodt
  */
 interface ParserContext<T, E> {
+    /**
+     * The source of this grammar's tokens.
+     */
+    val source: Source
+
     /**
      * The grammar of this parser's context.
      */

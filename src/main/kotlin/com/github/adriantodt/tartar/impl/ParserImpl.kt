@@ -1,6 +1,7 @@
 package com.github.adriantodt.tartar.impl
 
 import com.github.adriantodt.tartar.api.Closure
+import com.github.adriantodt.tartar.api.lexer.Source
 import com.github.adriantodt.tartar.api.parser.*
 
 class ParserImpl<T, E, R>(
@@ -8,16 +9,20 @@ class ParserImpl<T, E, R>(
     private val block: Closure<ParserContext<T, E>, R>
 ) : Parser<T, E, R> {
 
-    override fun parse(tokens: List<Token<T>>): R {
-        return ContextImpl(tokens, grammar).block()
+    override fun parse(source: Source, tokens: List<Token<T>>): R {
+        return ContextImpl(source, tokens, grammar).block()
     }
 
-    inner class ContextImpl(source: List<Token<T>>, override val grammar: Grammar<T, E>) : ParserContext<T, E> {
+    inner class ContextImpl(
+        override val source: Source,
+        tokens: List<Token<T>>,
+        override val grammar: Grammar<T, E>
+    ) : ParserContext<T, E> {
         inner class ChildContextImpl(override val grammar: Grammar<T, E>) : ParserContext<T, E> by this {
             override fun parseExpression(precedence: Int): E = parseExpr(grammar, precedence)
         }
 
-        private val tokens = source.toMutableList()
+        private val tokens = tokens.toMutableList()
 
         override var index: Int = 0
             private set
