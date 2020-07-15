@@ -78,14 +78,14 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
                 fillBufferNumbers(buf, true)
                 val isLong = match('l') || match('L')
                 val s = buf.toString()
-                val number = s.toIntOrNull(16) ?: return LexicalNumber.Invalid(buf.toString())
+                val number = s.toLongOrNull(16) ?: return LexicalNumber.Invalid(buf.toString())
                 return LexicalNumber.Integer(s, number, 16, isLong)
             }
             match('b') -> {
                 fillBufferNumbers(buf, false)
                 val isLong = match('l') || match('L')
                 val s = buf.toString()
-                val number = s.toIntOrNull(2) ?: return LexicalNumber.Invalid(buf.toString())
+                val number = s.toLongOrNull(2) ?: return LexicalNumber.Invalid(buf.toString())
                 return LexicalNumber.Integer(s, number, 2, isLong)
             }
             else -> {
@@ -109,10 +109,10 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
         }
         else -> {
             val s = buf.toString()
-            val int = s.toIntOrNull()
+            val int = s.toLongOrNull()
             if (int != null) {
                 val isLong = match('l') || match('L')
-                LexicalNumber.Integer(s, s.toInt(), 10, isLong)
+                LexicalNumber.Integer(s, int, 10, isLong)
             } else {
                 LexicalNumber.Invalid(buf.toString())
             }
@@ -137,9 +137,9 @@ sealed class LexicalNumber {
     data class Decimal(override val string: String, val value: Double, val isFloat: Boolean = false) : LexicalNumber()
 
     /**
-     * Read number is an integers.
+     * Read number is an integer.
      */
-    data class Integer(override val string: String, val value: Int, val radix: Int = 10, val isLong: Boolean = false) : LexicalNumber()
+    data class Integer(override val string: String, val value: Long, val radix: Int = 10, val isLong: Boolean = false) : LexicalNumber()
 }
 
 private fun LexerContext<*>.fillBufferNumbers(buf: StringBuilder, allowHex: Boolean) {
