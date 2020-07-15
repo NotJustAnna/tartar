@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-  compile 'net.notjustanna.libs:fakenetwork:VERSION'
+  compile 'net.notjustanna:tartar:VERSION'
 }
 ```
 
@@ -33,8 +33,8 @@ Using in Maven:
 
 <dependencies>
   <dependency>
-    <groupId>net.notjustanna.libs</groupId>
-    <artifactId>fakenetwork</artifactId>
+    <groupId>net.notjustanna</groupId>
+    <artifactId>tartar</artifactId>
     <version>VERSION</version>
   </dependency>
 </dependencies>
