@@ -1,11 +1,7 @@
 package net.notjustanna.tartar.impl
 
 import net.notjustanna.tartar.api.Closure
-import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.api.parser.Grammar
-import net.notjustanna.tartar.api.parser.Parser
-import net.notjustanna.tartar.api.parser.ParserContext
-import net.notjustanna.tartar.api.parser.SyntaxException
+import net.notjustanna.tartar.api.parser.*
 
 class ParserImpl<T, E, R>(
     override val grammar: Grammar<T, E>,
@@ -34,10 +30,13 @@ class ParserImpl<T, E, R>(
 
         override fun parseExpression(precedence: Int): E = parseExpr(grammar, precedence)
 
-        override fun eat() = tokens[index++]
+        override fun eat(): Token<T> {
+            if (eof) throw SyntaxException("Expected token but reached end of file", last.section)
+            return tokens[index++]
+        }
 
         override fun eat(type: T): Token<T> {
-            if (eof) throw SyntaxException("Expected $type but reached end of file.", last.section)
+            if (eof) throw SyntaxException("Expected $type but reached end of file", last.section)
             val token = peek()
             if (token.type != type) {
                 throw SyntaxException("Expected '$type' but found '${token.type}'.", token.section)
