@@ -109,8 +109,13 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
         }
         else -> {
             val s = buf.toString()
-            val isLong = match('l') || match('L')
-            LexicalNumber.Integer(s, s.toInt(), 10, isLong)
+            val int = s.toIntOrNull()
+            if (int != null) {
+                val isLong = match('l') || match('L')
+                LexicalNumber.Integer(s, s.toInt(), 10, isLong)
+            } else {
+                LexicalNumber.Invalid(buf.toString())
+            }
         }
     }
 }

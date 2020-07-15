@@ -30,7 +30,7 @@ class GrammarBuilder<T, E> : GrammarDSL<T, E> {
     }
 
     override fun infix(type: T, parselet: InfixParser<T, E>, override: Boolean) {
-        if (!override && type in prefixParsers) {
+        if (!override && type in infixParsers) {
             throw IllegalArgumentException("Infix parselet associated with $type already exists. Did you forget to enable overriding?")
         }
         infixParsers[type] = parselet
