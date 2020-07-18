@@ -80,11 +80,11 @@ class ParserImpl<T, E, R>(
         override fun peekAheadUntil(vararg type: T): List<Token<T>> {
             if (eof) return emptyList()
             val list = mutableListOf<Token<T>>()
-            var distance = 0
+            val lastIndex = index
             while (!eof && !nextIsAny(*type)) {
-                list += peek(distance)
-                distance++
+                list += eat()
             }
+            index = lastIndex
             return list
         }
 
