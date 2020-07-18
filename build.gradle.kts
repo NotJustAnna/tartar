@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "com.github.adriantodt"
-version = "1.4.4"
+version = "1.5"
 
 repositories {
     jcenter()

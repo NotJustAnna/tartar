@@ -16,20 +16,27 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     override fun parse(source: Source, output: (T) -> Unit) {
         ContextImpl(source, output).use { ctx ->
             while (ctx.hasNext()) {
-                ctx.read = 0
+                doParse(ctx, ctx)
+            }
+        }
+    }
 
-                val function = matcher.doMatch(ctx).onMatch
-                if (function != null) {
-                    function(ctx, ctx.curr)
-                } else {
-                    matcher.skipUntilMatch(ctx)
-                    val section = ctx.section(ctx.read)
-                    throw SyntaxException("No matcher registered for '${section.substring}'", section)
-                }
 
-                if (ctx.read == 0) {
-                    throw IllegalStateException("No further characters consumed.")
-                }
+    fun doParse(impl: ContextImpl, ctx: LexerContext<T>) {
+        if (impl.hasNext()) {
+            impl.read = 0
+
+            val function = matcher.doMatch(impl).onMatch
+            if (function != null) {
+                function(impl, impl.curr)
+            } else {
+                matcher.skipUntilMatch(impl)
+                val section = impl.section(impl.read)
+                throw SyntaxException("No matcher registered for '${section.substring}'", section)
+            }
+
+            if (impl.read == 0) {
+                throw IllegalStateException("No further characters consumed.")
             }
         }
     }
@@ -64,6 +71,14 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     }
 
     inner class ContextImpl(override val source: Source, private val output: (T) -> Unit) : LexerContext<T>, Closeable {
+        inner class CollectingContext(
+            private val collection: MutableCollection<T>
+        ) : LexerContext<T> by this {
+            override fun process(token: T) {
+                collection.add(token)
+            }
+        }
+
         override val reader: Reader = source.content.reader()
 
         var read = 0
@@ -154,6 +169,12 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
         override fun close() {
             reader.close()
+        }
+
+        override fun parseOnce(): List<T> {
+            val tokens = mutableListOf<T>()
+            doParse(this, CollectingContext(tokens))
+            return tokens
         }
     }
 }
