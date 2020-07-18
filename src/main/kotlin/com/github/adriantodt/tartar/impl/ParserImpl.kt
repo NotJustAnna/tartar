@@ -35,6 +35,8 @@ class ParserImpl<T, E, R>(
 
         override fun parseExpression(precedence: Int): E = parseExpr(grammar, precedence)
 
+        override fun parseExpressionInfix(expression: E, precedence: Int): E = parseInfix(expression, grammar, precedence)
+
         override fun eat(): Token<T> {
             if (eof) throw SyntaxException("Expected token but reached end of file", last.section)
             return tokens[index++]
@@ -92,13 +94,21 @@ class ParserImpl<T, E, R>(
         }
 
         fun parseExpr(grammar: Grammar<T, E>, precedence: Int): E {
-            var left: E = eat().let {
+            return parseInfix(parsePrefix(grammar, precedence), grammar, precedence)
+        }
+
+        fun parsePrefix(grammar: Grammar<T, E>, precedence: Int): E {
+            return eat().let {
                 grammar.prefixParsers[it.type]?.parse(this, it)
                     ?: throw SyntaxException("Unexpected $it", it.section)
             }
+        }
+
+        fun parseInfix(expression: E, grammar: Grammar<T, E>, precedence: Int): E {
+            var left = expression
             while (!eof && precedence < this.grammar.infixParsers[this.peek(0).type]?.precedence ?: 0) {
                 left = eat().let {
-                    grammar.infixParsers[it.type]?.parse(this, left, it)
+                    grammar.infixParsers[it.type]?.parse(this, expression, it)
                         ?: throw SyntaxException("Unexpected $it", it.section)
                 }
             }
