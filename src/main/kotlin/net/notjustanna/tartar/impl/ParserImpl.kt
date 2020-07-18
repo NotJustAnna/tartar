@@ -82,7 +82,8 @@ class ParserImpl<T, E, R>(
             val list = mutableListOf<Token<T>>()
             var distance = 0
             while (!eof && !nextIsAny(*type)) {
-                list += peek(distance++)
+                list += peek(distance)
+                distance++
             }
             return list
         }
