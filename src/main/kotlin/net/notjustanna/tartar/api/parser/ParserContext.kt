@@ -46,19 +46,9 @@ interface ParserContext<T, E> {
     fun parseExpression(precedence: Int = 0): E
 
     /**
-     * Parses infixes using using this parser's grammar.
-     */
-    fun parseExpressionInfix(expression: E, precedence: Int = 0): E
-
-    /**
      * Parses the expression using another grammar.
      */
     fun Grammar<T, E>.parseExpression(precedence: Int = 0): E = withGrammar(grammar).parseExpression(precedence)
-
-    /**
-     * Parses the expression using another grammar.
-     */
-    fun Grammar<T, E>.parseExpressionInfix(expression: E, precedence: Int = 0): E = withGrammar(grammar).parseExpressionInfix(expression, precedence)
 
     /**
      * Eats the current token, advancing the index by one.
