@@ -13,7 +13,7 @@ plugins {
 }
 
 group = "net.notjustanna"
-version = "1.5"
+version = "1.5.1"
 
 repositories {
     jcenter()

@@ -28,7 +28,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
             val function = matcher.doMatch(impl).onMatch
             if (function != null) {
-                function(impl, impl.curr)
+                function(ctx, impl.curr)
             } else {
                 matcher.skipUntilMatch(impl)
                 val section = impl.section(impl.read)
