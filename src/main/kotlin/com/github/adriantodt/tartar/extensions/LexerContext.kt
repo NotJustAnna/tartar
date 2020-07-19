@@ -147,7 +147,7 @@ sealed class LexicalNumber {
 private fun LexerContext<*>.fillBufferNumbers(buf: StringBuilder, allowHex: Boolean) {
     while (hasNext()) {
         val c = peek()
-        if (c.isDigit() || (allowHex && c in 'A'..'F' || c in 'a'..'f')) {
+        if (c.isDigit() || (allowHex && (c in 'A'..'F' || c in 'a'..'f'))) {
             buf.append(next())
         } else {
             break
