@@ -110,7 +110,9 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
         else -> {
             val s = buf.toString()
             val int = s.toLongOrNull()
-            if (int != null) {
+            if (match('f') || match('F')) {
+                LexicalNumber.Decimal(s, s.toDouble(), true)
+            } else if (int != null) {
                 val isLong = match('l') || match('L')
                 LexicalNumber.Integer(s, int, 10, isLong)
             } else {
