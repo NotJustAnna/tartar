@@ -23,7 +23,7 @@ interface ParserContext<T, E> {
     /**
      * The current index in the list of tokens.
      */
-    val index: Int
+    var index: Int
 
     /**
      * A property which is true if there's no more tokens.
