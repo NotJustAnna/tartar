@@ -25,7 +25,6 @@ class ParserImpl<T, E, R>(
         private val tokens = tokens.toMutableList()
 
         override var index: Int = 0
-            private set
 
         override val eof get() = index == tokens.size
 
