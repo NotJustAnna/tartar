@@ -1,7 +1,8 @@
 # tartar
 
-[![Bintray](https://img.shields.io/bintray/v/notjustanna/maven/tartar)](https://bintray.com/notjustanna/maven/tartar/_latestVersion)
-[![License](https://img.shields.io/github/license/notjustanna/tartar?color=lightgrey)](https://github.com/notjustanna/tartar/tree/master/LICENSE)
+[![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.cafeteria.dev%2Freleases%2Fcom%2Fgithub%2Fnotjustanna%2Ftartar%2Fmaven-metadata.xml)](https://maven.cafeteria.dev/releases/net/notjustanna/tartar)
+[![GitHub issues](https://img.shields.io/github/issues/notjustanna/tartar)](https://github.com/notjustanna/tartar/issues)
+[![License](https://img.shields.io/github/license/notjustanna/tartar)](https://github.com/notjustanna/tartar/tree/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fnotjustanna%2Ftartar)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fnotjustanna%2Ftartar)
 
 Kotlin trie-based lexical analysis and pratt-parsing as a DSL.
@@ -12,31 +13,32 @@ Using in Gradle:
 
 ```gradle
 repositories {
-  jcenter()
+  maven { url = 'https://maven.cafeteria.dev' }
 }
 
 dependencies {
-  compile 'net.notjustanna:tartar:VERSION'
+  implementation 'net.notjustanna:tartar:VERSION'
 }
 ```
 
 Using in Maven:
 
 ```xml
+
 <repositories>
-  <repository>
-    <id>central</id>
-    <name>bintray</name>
-    <url>http://jcenter.bintray.com</url>
-  </repository>
+    <repository>
+        <id>cafeteria</id>
+        <name>cafeteria</name>
+        <url>https://maven.cafeteria.dev</url>
+    </repository>
 </repositories>
 
 <dependencies>
-  <dependency>
+<dependency>
     <groupId>net.notjustanna</groupId>
     <artifactId>tartar</artifactId>
     <version>VERSION</version>
-  </dependency>
+</dependency>
 </dependencies>
 ```
 
