@@ -13,22 +13,29 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     private val matcher = LexerMatcher(root)
 
     override fun parse(source: Source, output: (T) -> Unit) {
-        ContextImpl(source, output).let { ctx ->
+        ContextImpl(source, output).use { ctx ->
             while (ctx.hasNext()) {
-                ctx.read = 0
+                doParse(ctx)
+            }
+        }
+    }
 
-                val function = matcher.doMatch(ctx).onMatch
-                if (function != null) {
-                    function(ctx, ctx.curr)
-                } else {
-                    matcher.skipUntilMatch(ctx)
-                    val section = ctx.section(ctx.read)
-                    throw SyntaxException("No matcher registered for '${section.substring}'", section)
-                }
 
-                if (ctx.read == 0) {
-                    throw IllegalStateException("No further characters consumed.")
-                }
+    fun doParse(impl: ContextImpl, ctx: LexerContext<T> = impl) {
+        if (impl.hasNext()) {
+            impl.read = 0
+
+            val function = matcher.doMatch(impl).onMatch
+            if (function != null) {
+                function(ctx, impl.curr)
+            } else {
+                matcher.skipUntilMatch(impl)
+                val section = impl.section(impl.read)
+                throw SyntaxException("No matcher registered for '${section.substring}'", section)
+            }
+
+            if (impl.read == 0) {
+                throw IllegalStateException("No further characters consumed.")
             }
         }
     }
@@ -63,6 +70,14 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     }
 
     inner class ContextImpl(override val source: Source, private val output: (T) -> Unit) : LexerContext<T> {
+        inner class CollectingContext(
+            private val collection: MutableCollection<T>
+        ) : LexerContext<T> by this {
+            override fun process(token: T) {
+                collection.add(token)
+            }
+        }
+
         override val reader: StringReader = StringReader(source.content)
 
         var read = 0
@@ -83,13 +98,9 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
         override fun peek(distance: Int): Char {
             reader.mark(distance + 1)
-            val chars = generateSequence { reader.read().takeUnless { it == -1 }?.toChar() }.take(distance + 1).toList()
-            val result = when {
-                chars.size < distance + 1 -> (-1).toChar()
-                else -> chars[distance]
-            }
+            val value = generateSequence { reader.read().takeUnless { it == -1 } }.elementAtOrNull(distance) ?: -1
             reader.reset()
-            return result
+            return value.toChar()
         }
 
         override fun peekString(length: Int): String {
@@ -147,6 +158,16 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
         override fun process(token: T) {
             output(token)
+        }
+
+        override fun parseOnce(): List<T> {
+            val tokens = mutableListOf<T>()
+            doParse(this, CollectingContext(tokens))
+            return tokens
+        }
+
+        fun <R> use(block: (ContextImpl) -> R): R {
+            return reader.using { block(this) }
         }
     }
 }

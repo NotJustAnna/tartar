@@ -23,6 +23,7 @@ fun classpathSource(lazyName: () -> String): Source {
     if (inputStream == null || resource == null) {
         throw IllegalArgumentException("Resource does not exist in classpath.")
     }
+
     return Source(inputStream.reader().readText(), name, resource.toString())
 }
 

@@ -1,5 +1,7 @@
 package net.notjustanna.tartar.api.parser
 
+import net.notjustanna.tartar.api.lexer.Source
+
 /**
  * A parsing context, created by a [Parser.parse] call, which exposes an interface for pratt-parsing.
  *
@@ -9,6 +11,11 @@ package net.notjustanna.tartar.api.parser
  */
 interface ParserContext<T, E> {
     /**
+     * The source of this grammar's tokens.
+     */
+    val source: Source
+
+    /**
      * The grammar of this parser's context.
      */
     val grammar: Grammar<T, E>
@@ -16,7 +23,7 @@ interface ParserContext<T, E> {
     /**
      * The current index in the list of tokens.
      */
-    val index: Int
+    var index: Int
 
     /**
      * A property which is true if there's no more tokens.

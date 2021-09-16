@@ -20,10 +20,11 @@ interface Parser<T, E, R> {
     /**
      * Parses tokens with this pratt-parser and returns the computed result.
      *
+     * @param source A source of characters.
      * @param tokens A list of tokens, probably created with [Lexer].
      * @return The computed result.
      */
-    fun parse(tokens: List<Token<T>>): R
+    fun parse(source: Source, tokens: List<Token<T>>): R
 
     /**
      * Parses tokens from a source, using a specified lexer, with this pratt-parser, and returns the computed result.
@@ -33,6 +34,6 @@ interface Parser<T, E, R> {
      * @return The computed result.
      */
     fun parse(source: Source, lexer: Lexer<Token<T>>): R {
-        return parse(lexer.parseToList(source))
+        return parse(source, lexer.parseToList(source))
     }
 }
