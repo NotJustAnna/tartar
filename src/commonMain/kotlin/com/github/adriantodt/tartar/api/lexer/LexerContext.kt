@@ -67,4 +67,9 @@ interface LexerContext<T> {
      * Calls the [Lexer.parse]'s token consumer.
      */
     fun process(token: T)
+
+    /**
+     * Lexes once and return the processed tokens.
+     */
+    fun parseOnce(): List<T>
 }

@@ -11,5 +11,5 @@ interface PrefixParser<T, E> {
     /**
      * This prefix parser's parsing implementation.
      */
-    fun parse(parser: ParserContext<T, E>, token: Token<T>): E
+    fun parse(ctx: ParserContext<T, E>, token: Token<T>): E
 }
