@@ -16,7 +16,7 @@ class MatcherImpl<T> : LexerDSL<T> {
         return when (string.length) {
             0 -> this
             1 -> matching(string.first())
-            else -> string.substring(1).fold(matching(string.first()), MatcherImpl<T>::matching)
+            else -> string.fold(this, MatcherImpl<T>::matching)
         }
     }
 
@@ -25,9 +25,9 @@ class MatcherImpl<T> : LexerDSL<T> {
     }
 
     override fun matching(block: CharPredicate): MatcherImpl<T> {
-        val m = MatcherImpl<T>()
-        predicates.add(block to m)
-        return m
+        val matcher = MatcherImpl<T>()
+        predicates += block to matcher
+        return matcher
     }
 
     override fun configure(block: ClosureFunction<LexerContext<T>, Char, Unit>) {

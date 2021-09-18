@@ -14,12 +14,9 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
     override fun parse(source: Source, output: (T) -> Unit) {
         ContextImpl(source, output).use { ctx ->
-            while (ctx.hasNext()) {
-                doParse(ctx)
-            }
+            while (ctx.hasNext()) doParse(ctx)
         }
     }
-
 
     fun doParse(impl: ContextImpl, ctx: LexerContext<T> = impl) {
         if (impl.hasNext()) {
@@ -34,9 +31,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
                 throw SyntaxException("No matcher registered for '${section.substring}'", section)
             }
 
-            if (impl.read == 0) {
-                throw IllegalStateException("No further characters consumed.")
-            }
+            if (impl.read == 0) throw IllegalStateException("No further characters consumed.")
         }
     }
 
@@ -70,9 +65,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     }
 
     inner class ContextImpl(override val source: Source, private val output: (T) -> Unit) : LexerContext<T> {
-        inner class CollectingContext(
-            private val collection: MutableCollection<T>
-        ) : LexerContext<T> by this {
+        inner class CollectingContext(private val collection: MutableCollection<T>) : LexerContext<T> by this {
             override fun process(token: T) {
                 collection.add(token)
             }
@@ -82,9 +75,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
         var read = 0
 
-        override var lineNumber: Int = 1
-            private set
-        override var lineIndex: Int = 0
+        override var index: Int = 0
             private set
 
         var curr: Char = (-1).toChar()
@@ -114,12 +105,9 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         }
 
         override fun match(expect: Char): Boolean {
-            return if (peek() == expect) {
-                next()
-                true
-            } else {
-                false
-            }
+            val matched = peek() == expect
+            if (matched) next()
+            return matched
         }
 
         override fun hasNext(): Boolean {
@@ -130,30 +118,18 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         }
 
         override fun next(): Char {
-            read++
             val c = reader.read().toChar()
-
-            when (c) {
-                '\n' -> {
-                    lineNumber++
-                    lineIndex = 0
-                }
-                else -> {
-                    lineIndex++
-                }
-            }
-
+            read++
+            index++
             curr = c
             return c
         }
 
         override fun nextString(length: Int): String {
-            val buf = StringBuilder(length)
-            var i = 0
-            while (hasNext() && i++ < length) {
-                buf.append(next())
+            return buildString(length) {
+                var i = 0
+                while (hasNext() && i++ < length) append(next())
             }
-            return buf.toString()
         }
 
         override fun process(token: T) {
@@ -161,9 +137,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         }
 
         override fun parseOnce(): List<T> {
-            val tokens = mutableListOf<T>()
-            doParse(this, CollectingContext(tokens))
-            return tokens
+            return mutableListOf<T>().also { doParse(this, CollectingContext(it)) }
         }
 
         fun <R> use(block: (ContextImpl) -> R): R {

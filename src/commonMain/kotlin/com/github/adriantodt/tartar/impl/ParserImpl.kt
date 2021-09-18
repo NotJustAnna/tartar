@@ -49,21 +49,15 @@ class ParserImpl<T, E, R>(
         }
 
         override fun match(type: T): Boolean {
-            return if (nextIs(type)) {
-                eat()
-                true
-            } else {
-                false
-            }
+            val shouldEat = nextIs(type)
+            if (shouldEat) eat()
+            return shouldEat
         }
 
         override fun matchAny(vararg type: T): Boolean {
-            return if (nextIsAny(*type)) {
-                eat()
-                true
-            } else {
-                false
-            }
+            val shouldEat = nextIsAny(*type)
+            if (shouldEat) eat()
+            return shouldEat
         }
 
         override fun back() = tokens[--index]
@@ -78,17 +72,13 @@ class ParserImpl<T, E, R>(
             if (eof) return emptyList()
             val list = mutableListOf<Token<T>>()
             val lastIndex = index
-            while (!eof && !nextIsAny(*type)) {
-                list += eat()
-            }
+            while (!eof && !nextIsAny(*type)) list += eat()
             index = lastIndex
             return list
         }
 
         override fun skipUntil(vararg type: T) {
-            while (!eof && !nextIsAny(*type)) {
-                eat()
-            }
+            while (!eof && !nextIsAny(*type)) eat()
         }
 
         fun parseExpr(grammar: Grammar<T, E>, precedence: Int): E {

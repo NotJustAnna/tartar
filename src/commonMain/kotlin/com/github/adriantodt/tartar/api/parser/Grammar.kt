@@ -9,7 +9,4 @@ package com.github.adriantodt.tartar.api.parser
  * @param infixParsers A map of prefix parsers for each token type.
  * @author An Tran
  */
-data class Grammar<T, E>(
-    val prefixParsers: Map<T, PrefixParser<T, E>> = emptyMap(),
-    val infixParsers: Map<T, InfixParser<T, E>> = emptyMap()
-)
+data class Grammar<T, E>(val prefixParsers: Map<T, PrefixParser<T, E>>, val infixParsers: Map<T, InfixParser<T, E>>)

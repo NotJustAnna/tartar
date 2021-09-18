@@ -18,14 +18,9 @@ interface LexerContext<T> {
     val reader: StringReader
 
     /**
-     * The current line number.
+     * The current index.
      */
-    val lineNumber: Int
-
-    /**
-     * The current line index.
-     */
-    val lineIndex: Int
+    val index: Int
 
     /**
      * Peeks the next character of the reader.

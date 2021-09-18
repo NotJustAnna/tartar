@@ -34,7 +34,7 @@ fun main() {
     val grammar: Grammar<TokenType, String> = createGrammar {
         // Create a prefix parselet as a lambda function.
         prefix(STRING) { token -> token.value }
-        // Create a infix parselet, with support to precedence as a lambda function.
+        // Create an infix parselet, with support to precedence as a lambda function.
         infix(PLUS, 1) { left, _ -> left + parseExpression() }
     }
 
