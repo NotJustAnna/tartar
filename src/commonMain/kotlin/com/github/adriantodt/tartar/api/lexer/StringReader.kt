@@ -12,7 +12,7 @@ expect class StringReader(s: String) {
     /**
      * Skips a specified amount of characters in the stream, returning the amount of characters actually skipped.
      */
-    fun skip(n: Long): Long
+    fun skip(ns: Long): Long
 
     /**
      * Marks the stream's current position. Calling reset() reverts the stream to this position.
