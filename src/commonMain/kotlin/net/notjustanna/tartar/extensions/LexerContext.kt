@@ -8,7 +8,7 @@ import net.notjustanna.tartar.api.parser.Token
  * Creates a section.
  */
 fun LexerContext<*>.section(offset: Int, length: Int = 0): Section {
-    return Section(source, lineNumber, lineIndex - length - offset, length + offset)
+    return Section(source, index - length - offset, length + offset)
 }
 
 /**
@@ -22,7 +22,7 @@ fun <T> LexerContext<Token<T>>.makeToken(tokenType: T, offset: Int = 1) = makeTo
 fun <T> LexerContext<Token<T>>.makeToken(tokenType: T, string: String, offset: Int = 0) = Token(
     tokenType,
     string,
-    Section(source, lineNumber, lineIndex - string.length - offset, string.length + offset)
+    Section(source, index - string.length - offset, string.length + offset)
 )
 
 /**
@@ -126,6 +126,9 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
  * Result of [readNumber].
  */
 sealed class LexicalNumber {
+    /**
+     * The original string value of the number.
+     */
     abstract val string: String
 
     /**
@@ -136,13 +139,16 @@ sealed class LexicalNumber {
     /**
      * Read number is a decimal.
      */
-    data class Decimal(override val string: String, val value: Double, val isFloat: Boolean = false) : LexicalNumber()
+    data class Decimal(
+        override val string: String, val value: Double, val isFloat: Boolean = false
+    ) : LexicalNumber()
 
     /**
      * Read number is an integer.
      */
-    data class Integer(override val string: String, val value: Long, val radix: Int = 10, val isLong: Boolean = false) :
-        LexicalNumber()
+    data class Integer(
+        override val string: String, val value: Long, val radix: Int = 10, val isLong: Boolean = false
+    ) : LexicalNumber()
 }
 
 private fun LexerContext<*>.fillBufferNumbers(buf: StringBuilder, allowHex: Boolean) {

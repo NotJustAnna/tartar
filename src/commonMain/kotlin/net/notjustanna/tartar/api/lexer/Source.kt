@@ -1,5 +1,7 @@
 package net.notjustanna.tartar.api.lexer
 
+import net.notjustanna.tartar.impl.calculateLineRanges
+
 /**
  * A source of text to [lexers][Lexer].
  *
@@ -13,5 +15,17 @@ data class Source(val content: String, val name: String = "?", val path: String 
     /**
      * The lines of the content.
      */
-    val lines = content.lines()
+    val lines by lazy {
+        content.calculateLineRanges().mapIndexed { index, range ->
+            Line(index + 1, content.substring(range), range)
+        }
+    }
+
+    /**
+     * Represents a line from the source.
+     * @param lineNumber The line's number.
+     * @param content The line's content, including the line separator.
+     * @param range The line's range spanning the source's content.
+     */
+    data class Line internal constructor(val lineNumber: Int, val content: String, val range: IntRange)
 }
