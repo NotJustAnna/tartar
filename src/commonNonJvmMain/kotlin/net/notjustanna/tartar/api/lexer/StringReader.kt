@@ -13,9 +13,9 @@ actual class StringReader actual constructor(s: String) {
         return if (next >= length) -1 else str[next++].code
     }
 
-    actual fun skip(n: Long): Long {
+    actual fun skip(ns: Long): Long {
         if (next >= length) return 0
-        var n = min(length - next.toLong(), n)
+        var n = min(length - next.toLong(), ns)
         n = max(-next.toLong(), n)
         next += n.toInt()
         return n
