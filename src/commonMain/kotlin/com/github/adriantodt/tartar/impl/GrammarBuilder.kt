@@ -1,45 +1,45 @@
 package com.github.adriantodt.tartar.impl
 
-import com.github.adriantodt.tartar.api.GrammarDSL
-import com.github.adriantodt.tartar.api.InfixFunction
-import com.github.adriantodt.tartar.api.PrefixFunction
-import com.github.adriantodt.tartar.api.parser.Grammar
-import com.github.adriantodt.tartar.api.parser.InfixParser
-import com.github.adriantodt.tartar.api.parser.PrefixParser
+import com.github.adriantodt.tartar.api.dsl.GrammarDSL
+import com.github.adriantodt.tartar.api.dsl.InfixFunction
+import com.github.adriantodt.tartar.api.dsl.PrefixFunction
+import com.github.adriantodt.tartar.api.grammar.Grammar
+import com.github.adriantodt.tartar.api.grammar.InfixParselet
+import com.github.adriantodt.tartar.api.grammar.PrefixParselet
 
-class GrammarBuilder<T, E> : GrammarDSL<T, E> {
-    private val prefixParsers = LinkedHashMap<T, PrefixParser<T, E>>()
-    private val infixParsers = LinkedHashMap<T, InfixParser<T, E>>()
+internal class GrammarBuilder<T, E> : GrammarDSL<T, E> {
+    private val prefix = LinkedHashMap<T, PrefixParselet<T, E>>()
+    private val infix = LinkedHashMap<T, InfixParselet<T, E>>()
 
     override fun import(override: Boolean, vararg grammars: Grammar<T, E>) {
         grammars.forEach {
-            it.prefixParsers.forEach { (k, v) -> prefix(k, v, override) }
-            it.infixParsers.forEach { (k, v) -> infix(k, v, override) }
+            it.prefix.forEach { (k, v) -> prefix(k, v, override) }
+            it.infix.forEach { (k, v) -> infix(k, v, override) }
         }
     }
 
-    override fun prefix(type: T, parselet: PrefixParser<T, E>, override: Boolean) {
-        if (!override && type in prefixParsers) {
+    override fun prefix(type: T, parselet: PrefixParselet<T, E>, override: Boolean) {
+        if (!override && type in prefix) {
             throw IllegalArgumentException("Prefix parselet associated with $type already exists. Did you forget to enable overriding?")
         }
-        prefixParsers[type] = parselet
+        prefix[type] = parselet
     }
 
     override fun prefix(type: T, override: Boolean, block: PrefixFunction<T, E>) {
-        prefix(type, PrefixParserImpl(block))
+        prefix(type, PrefixParseletImpl(block))
     }
 
-    override fun infix(type: T, parselet: InfixParser<T, E>, override: Boolean) {
-        if (!override && type in infixParsers) {
+    override fun infix(type: T, parselet: InfixParselet<T, E>, override: Boolean) {
+        if (!override && type in infix) {
             throw IllegalArgumentException("Infix parselet associated with $type already exists. Did you forget to enable overriding?")
         }
-        infixParsers[type] = parselet
+        infix[type] = parselet
     }
 
     override fun infix(type: T, precedence: Int, override: Boolean, block: InfixFunction<T, E>) {
-        infix(type, InfixParserImpl(precedence, block))
+        infix(type, InfixParseletImpl(precedence, block))
     }
 
-    fun build() = Grammar(prefixParsers.toMap(), infixParsers.toMap())
+    internal fun build() = Grammar(prefix.toMap(), infix.toMap())
 }
 

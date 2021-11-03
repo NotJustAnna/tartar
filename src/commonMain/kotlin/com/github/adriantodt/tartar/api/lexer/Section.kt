@@ -11,14 +11,13 @@ import kotlin.math.min
  * @param length The section's length.
  * @author An Tran, AdrianTodt
  */
-data class Section(val source: Source, val index: Int, val length: Int) {
+public data class Section(public val source: Source, public val index: Int, public val length: Int) {
     init {
-        val bounds = 0..source.content.length
-        require(index in bounds) {
+        require(index in source.bounds) {
             "Section index ($index) must be within content's bounds (0..${source.content.length})"
         }
         val end = index + length
-        require(end in bounds) {
+        require(end in source.bounds) {
             "Section end ($end) must be within content's bounds (0..${source.content.length})"
         }
     }
@@ -26,44 +25,45 @@ data class Section(val source: Source, val index: Int, val length: Int) {
     /**
      * The range of this section.
      */
-    val range by lazy { index..(index + length) }
+    public val range: IntRange = index..(index + length)
 
     /**
      * The substring this section represents.
      */
-    val substring by lazy { source.content.substring(range) }
+    public val substring: String = source.content.substring(range)
 
     /**
      * The lines of this section.
      */
-    val lines by lazy {
-        source.lines.dropWhile { range.first > it.range.last }.takeWhile { range.last > it.range.first }
-    }
+    public val lines: List<Source.Line> = source.lines
+        .dropWhile { range.first > it.range.last }
+        .takeWhile { range.last > it.range.first }
+
 
     /**
      * The line number of the start of the section.
      */
-    val startLineNumber by lazy { lines.first().lineNumber }
+    public val startLineNumber: Int = lines.first().lineNumber
 
     /**
      * The line index of the start of the section.
      */
-    val startLineIndex by lazy { range.first - lines.first().range.first }
+    public val startLineIndex: Int = range.first - lines.first().range.first
 
     /**
      * The line number of the end of the section.
      */
-    val endLineNumber by lazy { lines.last().lineNumber }
+    public val endLineNumber: Int = lines.last().lineNumber
 
     /**
      * The line index of the end of the section.
      */
-    val endLineIndex by lazy { range.last - lines.last().range.last }
+    public val endLineIndex: Int = range.last - lines.last().range.last
 
     /**
      * Creates a new section which spans across this and another section.
      */
-    fun span(other: Section): Section {
+    public fun span(other: Section): Section {
         require(source == other.source) {
             "Sections $this and $other have different sources and thus can't be spanned."
         }
@@ -77,5 +77,7 @@ data class Section(val source: Source, val index: Int, val length: Int) {
     /**
      * Returns a string representation of the section.
      */
-    override fun toString() = "(${source.name}:$startLineNumber:$startLineIndex)"
+    override fun toString(): String {
+        return "(${source.name}:$startLineNumber:$startLineIndex)"
+    }
 }

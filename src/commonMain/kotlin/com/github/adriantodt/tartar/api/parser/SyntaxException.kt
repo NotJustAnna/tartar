@@ -9,4 +9,4 @@ import com.github.adriantodt.tartar.api.lexer.Section
  * @param position The [section][Section] where it happened.
  * @author An Tran
  */
-open class SyntaxException(message: String, val position: Section) : RuntimeException("$message at $position")
+public open class SyntaxException(message: String, public val position: Section) : RuntimeException("$message at $position")

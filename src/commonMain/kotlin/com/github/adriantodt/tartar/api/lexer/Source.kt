@@ -11,15 +11,18 @@ import com.github.adriantodt.tartar.impl.calculateLineRanges
  * @param path The path to the source.
  * @author AdrianTodt, An Tran
  */
-data class Source(val content: String, val name: String = "?", val path: String = "!!no path!!") {
+public data class Source(val content: String, val name: String = "?", val path: String = "!!no path!!") {
     /**
      * The lines of the content.
      */
-    val lines by lazy {
-        content.calculateLineRanges().mapIndexed { index, range ->
-            Line(index + 1, content.substring(range), range)
-        }
+    val lines: List<Line> = content.calculateLineRanges().mapIndexed { index, range ->
+        Line(index + 1, content.substring(range), range)
     }
+
+    /**
+     * The bounds of a given source.
+     */
+    val bounds: IntRange = 0..content.length
 
     /**
      * Represents a line from the source.
@@ -27,5 +30,7 @@ data class Source(val content: String, val name: String = "?", val path: String 
      * @param content The line's content, including the line separator.
      * @param range The line's range spanning the source's content.
      */
-    data class Line internal constructor(val lineNumber: Int, val content: String, val range: IntRange)
+    public data class Line internal constructor(val lineNumber: Int, val content: String, val range: IntRange)
+
+    public companion object
 }
