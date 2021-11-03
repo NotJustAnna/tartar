@@ -78,8 +78,8 @@ publishing {
             url = uri("https://maven.cafeteria.dev/releases")
 
             credentials {
-                username = "${project.findProperty("mcdUsername")}"
-                password = "${project.findProperty("mcdPassword")}"
+                username = "${project.findProperty("mcdUsername") ?: System.getenv("MCD_USERNAME")}"
+                password = "${project.findProperty("mcdPassword") ?: System.getenv("MCD_PASSWORD")}"
             }
             authentication {
                 create("basic", BasicAuthentication::class.java)
