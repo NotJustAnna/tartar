@@ -1,14 +1,16 @@
 package net.notjustanna.tartar.impl
 
-import net.notjustanna.tartar.api.CharPredicate
-import net.notjustanna.tartar.api.ClosureFunction
-import net.notjustanna.tartar.api.LexerDSL
-import net.notjustanna.tartar.api.lexer.LexerContext
+import net.notjustanna.tartar.api.dsl.LexerDSL
+import net.notjustanna.tartar.api.dsl.MatchFunction
+import net.notjustanna.tartar.api.dsl.CharPredicate
 
-class MatcherImpl<T> : LexerDSL<T> {
+internal class MatcherImpl<T> : LexerDSL<T> {
+    internal class MatcherWithPredicate<T>(val predicate: CharPredicate, val matcher: MatcherImpl<T>) {
+        fun isMatcherEmpty() = matcher.isEmpty()
+    }
     val trie = LinkedHashMap<Char, MatcherImpl<T>>()
-    val predicates = ArrayList<Pair<CharPredicate, MatcherImpl<T>>>()
-    var onMatch: ClosureFunction<LexerContext<T>, Char, Unit>? = null
+    val predicates = ArrayList<MatcherWithPredicate<T>>()
+    var onMatch: MatchFunction<T>? = null
 
     fun isEmpty() = trie.isEmpty() && predicates.isEmpty() && onMatch == null
 
@@ -26,11 +28,11 @@ class MatcherImpl<T> : LexerDSL<T> {
 
     override fun matching(block: CharPredicate): MatcherImpl<T> {
         val matcher = MatcherImpl<T>()
-        predicates += block to matcher
+        predicates += MatcherWithPredicate(block, matcher)
         return matcher
     }
 
-    override fun configure(block: ClosureFunction<LexerContext<T>, Char, Unit>) {
+    override fun configure(block: MatchFunction<T>) {
         onMatch = block
     }
 }

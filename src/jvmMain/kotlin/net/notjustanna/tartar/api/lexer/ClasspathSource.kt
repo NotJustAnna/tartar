@@ -1,6 +1,4 @@
-package net.notjustanna.tartar
-
-import net.notjustanna.tartar.api.lexer.Source
+package net.notjustanna.tartar.api.lexer
 
 /**
  * Creates a source from the classpath.
@@ -8,7 +6,7 @@ import net.notjustanna.tartar.api.lexer.Source
  * @return A source loaded from the classpath.
  * @author NotJustAnna
  */
-fun classpathSource(lazyName: () -> String): Source {
+public fun Source.Companion.classpath(lazyName: () -> String): Source {
     /*
      * RE: But WHY?
      *

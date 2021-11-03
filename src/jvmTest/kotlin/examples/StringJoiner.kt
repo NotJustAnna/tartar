@@ -1,12 +1,11 @@
 package examples
 
+import net.notjustanna.tartar.api.grammar.Grammar
 import net.notjustanna.tartar.api.lexer.Lexer
-import net.notjustanna.tartar.api.parser.Grammar
+import net.notjustanna.tartar.api.lexer.Source
+import net.notjustanna.tartar.api.lexer.classpath
+import net.notjustanna.tartar.api.parser.SourceParser
 import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.classpathSource
-import net.notjustanna.tartar.createGrammar
-import net.notjustanna.tartar.createLexer
-import net.notjustanna.tartar.createParser
 import net.notjustanna.tartar.extensions.ensureEOF
 import net.notjustanna.tartar.extensions.makeToken
 import net.notjustanna.tartar.extensions.readString
@@ -20,7 +19,7 @@ private enum class TokenType {
 
 fun main() {
     // Create a lexer as simple as a method call.
-    val lexer: Lexer<Token<TokenType>> = createLexer {
+    val lexer = Lexer.create<Token<TokenType>> {
         // Implement a token type per line.
         '+' { process(makeToken(PLUS)) }
         // Built-in extension functions.
@@ -31,7 +30,7 @@ fun main() {
     }
 
     // Create a pratt-parser grammar. Dead simple.
-    val grammar: Grammar<TokenType, String> = createGrammar {
+    val grammar = Grammar.create<TokenType, String> {
         // Create a prefix parselet as a lambda function.
         prefix(STRING) { token -> token.value }
         // Create an infix parselet, with support to precedence as a lambda function.
@@ -39,7 +38,7 @@ fun main() {
     }
 
     // Use your grammar to create a pratt-parser.
-    val parser = createParser(grammar) { // Actual code run by the parser.
+    val parser = SourceParser.create(lexer, grammar) { // Actual code run by the parser.
         // Extension function: Throws if there's still tokens.
         ensureEOF {
             // Parses a expression using this parsers' grammar.
@@ -48,6 +47,6 @@ fun main() {
     }
 
     // One line of code to rule them all.
-    val result = parser.parse(classpathSource { "input.str" }, lexer)
+    val result = parser.parse(Source.classpath { "input.str" })
     println(result)
 }

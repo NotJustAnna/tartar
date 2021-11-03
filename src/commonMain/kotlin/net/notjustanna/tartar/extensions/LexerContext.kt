@@ -7,28 +7,29 @@ import net.notjustanna.tartar.api.parser.Token
 /**
  * Creates a section.
  */
-fun LexerContext<*>.section(offset: Int, length: Int = 0): Section {
+public fun LexerContext<*>.section(offset: Int, length: Int = 0): Section {
     return Section(source, index - length - offset, length + offset)
 }
 
 /**
  * Creates a token.
  */
-fun <T> LexerContext<Token<T>>.makeToken(tokenType: T, offset: Int = 1) = makeToken(tokenType, "", offset)
+public fun <T> LexerContext<Token<T>>.makeToken(type: T, offset: Int = 1): Token<T> {
+    return makeToken(type, "", offset)
+}
 
 /**
  * Creates a token.
  */
-fun <T> LexerContext<Token<T>>.makeToken(tokenType: T, string: String, offset: Int = 0) = Token(
-    tokenType,
-    string,
-    Section(source, index - string.length - offset, string.length + offset)
-)
+public fun <T> LexerContext<Token<T>>.makeToken(type: T, string: String, offset: Int = 0): Token<T> {
+    val section = Section(source, index - string.length - offset, string.length + offset)
+    return Token(type, string, section)
+}
 
 /**
  * Reads a C-like identifier.
  */
-fun LexerContext<*>.readIdentifier(firstChar: Char? = null): String {
+public fun LexerContext<*>.readIdentifier(firstChar: Char? = null): String {
     val buf = StringBuilder()
     firstChar?.let(buf::append)
     while (hasNext()) {
@@ -46,7 +47,7 @@ fun LexerContext<*>.readIdentifier(firstChar: Char? = null): String {
 /**
  * Reads a String up until a delimiter.
  */
-fun LexerContext<*>.readString(delimiter: Char): String {
+public fun LexerContext<*>.readString(delimiter: Char): String {
     val buf = StringBuilder()
     var eol = false
     while (hasNext()) {
@@ -69,7 +70,7 @@ fun LexerContext<*>.readString(delimiter: Char): String {
 /**
  * Reads a number.
  */
-fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
+public fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
     val buf = StringBuilder()
 
     if (c == '0') {
@@ -125,28 +126,28 @@ fun LexerContext<*>.readNumber(c: Char): LexicalNumber {
 /**
  * Result of [readNumber].
  */
-sealed class LexicalNumber {
+public sealed class LexicalNumber {
     /**
      * The original string value of the number.
      */
-    abstract val string: String
+    public abstract val string: String
 
     /**
      * Read number is invalid.
      */
-    data class Invalid(override val string: String) : LexicalNumber()
+    public data class Invalid(override val string: String) : LexicalNumber()
 
     /**
      * Read number is a decimal.
      */
-    data class Decimal(
+    public data class Decimal(
         override val string: String, val value: Double, val isFloat: Boolean = false
     ) : LexicalNumber()
 
     /**
      * Read number is an integer.
      */
-    data class Integer(
+    public data class Integer(
         override val string: String, val value: Long, val radix: Int = 10, val isLong: Boolean = false
     ) : LexicalNumber()
 }
