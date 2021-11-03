@@ -1,6 +1,4 @@
-package com.github.adriantodt.tartar
-
-import com.github.adriantodt.tartar.api.lexer.Source
+package com.github.adriantodt.tartar.api.lexer
 
 /**
  * Creates a source from the classpath.
@@ -8,7 +6,7 @@ import com.github.adriantodt.tartar.api.lexer.Source
  * @return A source loaded from the classpath.
  * @author AdrianTodt
  */
-fun classpathSource(lazyName: () -> String): Source {
+public fun Source.Companion.classpath(lazyName: () -> String): Source {
     /*
      * RE: But WHY?
      *

@@ -2,11 +2,12 @@ package com.github.adriantodt.tartar.extensions
 
 import com.github.adriantodt.tartar.api.parser.ParserContext
 import com.github.adriantodt.tartar.api.parser.SyntaxException
+import com.github.adriantodt.tartar.api.parser.Token
 
 /**
  * Ensures there's no character files after this block of code.
  */
-fun <R> ParserContext<*, *>.ensureEOF(block: () -> R): R {
+public fun <R> ParserContext<*, *>.ensureEOF(block: () -> R): R {
     val r = block()
     if (!eof) throw SyntaxException("Should've reached end of content", eat().section)
     return r
@@ -15,4 +16,6 @@ fun <R> ParserContext<*, *>.ensureEOF(block: () -> R): R {
 /**
  * Eats tokens in a row. Returns a list, which can be used with a destructuring declaration.
  */
-fun <T> ParserContext<T, *>.eatMulti(vararg types: T) = types.map(this::eat)
+public fun <T> ParserContext<T, *>.eatMulti(vararg types: T): List<Token<T>> {
+    return types.map(this::eat)
+}

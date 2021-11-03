@@ -1,15 +1,12 @@
 package com.github.adriantodt.tartar.impl
 
-import com.github.adriantodt.tartar.api.CharPredicate
-import com.github.adriantodt.tartar.api.ClosureFunction
-import com.github.adriantodt.tartar.api.lexer.Lexer
-import com.github.adriantodt.tartar.api.lexer.LexerContext
-import com.github.adriantodt.tartar.api.lexer.Source
-import com.github.adriantodt.tartar.api.lexer.StringReader
+import com.github.adriantodt.tartar.api.dsl.CharPredicate
+import com.github.adriantodt.tartar.api.dsl.MatchFunction
+import com.github.adriantodt.tartar.api.lexer.*
 import com.github.adriantodt.tartar.api.parser.SyntaxException
 import com.github.adriantodt.tartar.extensions.section
 
-class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
+internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     private val matcher = LexerMatcher(root)
 
     override fun parse(source: Source, output: (T) -> Unit) {
@@ -18,7 +15,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         }
     }
 
-    fun doParse(impl: ContextImpl, ctx: LexerContext<T> = impl) {
+    private fun doParse(impl: ContextImpl, ctx: LexerContext<T> = impl) {
         if (impl.hasNext()) {
             impl.read = 0
 
@@ -35,20 +32,24 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         }
     }
 
-    data class LexerMatcher<T>(
-        val trie: Map<Char, LexerMatcher<T>>,
-        val predicates: List<Pair<CharPredicate, LexerMatcher<T>>>,
-        val onMatch: ClosureFunction<LexerContext<T>, Char, Unit>?
+    private class LexerMatcher<T>(
+        private val trie: Map<Char, LexerMatcher<T>>,
+        private val predicates: List<LexerMatcherWithPredicate<T>>,
+        val onMatch: MatchFunction<T>?
     ) {
         constructor(m: MatcherImpl<T>) : this(
             m.trie.filterNot { it.value.isEmpty() }.mapValues { LexerMatcher(it.value) },
-            m.predicates.filterNot { it.second.isEmpty() }.map { it.first to LexerMatcher(it.second) },
+            m.predicates.filterNot { it.isMatcherEmpty() }.map { LexerMatcherWithPredicate(it) },
             m.onMatch
         )
 
         fun tryMatchChild(char: Char): LexerMatcher<T>? {
-            return trie[char] ?: predicates.firstOrNull { it.first(char) }?.second
+            return trie[char] ?: predicates.firstOrNull { it.predicate.test(char) }?.matcher
         }
+    }
+
+    private class LexerMatcherWithPredicate<T>(val predicate: CharPredicate, val matcher: LexerMatcher<T>) {
+        constructor(m: MatcherImpl.MatcherWithPredicate<T>) : this(m.predicate, LexerMatcher(m.matcher))
     }
 
     private tailrec fun LexerMatcher<*>.skipUntilMatch(ctx: ContextImpl) {
@@ -64,8 +65,8 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         return (tryMatchChild(ctx.peek()) ?: return this).doMatch(ctx, true)
     }
 
-    inner class ContextImpl(override val source: Source, private val output: (T) -> Unit) : LexerContext<T> {
-        inner class CollectingContext(private val collection: MutableCollection<T>) : LexerContext<T> by this {
+    private inner class ContextImpl(override val source: Source, private val output: (T) -> Unit) : LexerContext<T> {
+        private inner class CollectingContext(private val collection: MutableCollection<T>) : LexerContext<T> by this {
             override fun process(token: T) {
                 collection.add(token)
             }
@@ -89,17 +90,31 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
 
         override fun peek(distance: Int): Char {
             reader.mark(distance + 1)
-            val value = generateSequence { reader.read().takeUnless { it == -1 } }.elementAtOrNull(distance) ?: -1
+            var value = -1
+            for (i in 0 until distance) {
+                val next = reader.read()
+                if (next == -1) {
+                    value = -1
+                    break
+                } else if (i != distance -1) {
+                    continue
+                }
+                value = next
+            }
+            // val value = generateSequence { reader.read().takeUnless { it == -1 } }.elementAtOrNull(distance) ?: -1
             reader.reset()
             return value.toChar()
         }
 
         override fun peekString(length: Int): String {
             reader.mark(length)
-            val value = generateSequence { reader.read().takeUnless { it == -1 }?.toChar() }
-                .take(length)
-                .fold(StringBuilder(), StringBuilder::append)
-                .toString()
+            val value = buildString(length) {
+                for (i in 0 until length) {
+                    val next = reader.read()
+                    if (next == -1) break
+                    append(next.toChar())
+                }
+            }
             reader.reset()
             return value
         }
@@ -140,7 +155,7 @@ class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
             return mutableListOf<T>().also { doParse(this, CollectingContext(it)) }
         }
 
-        fun <R> use(block: (ContextImpl) -> R): R {
+        internal inline fun <R> use(block: (ContextImpl) -> R): R {
             return reader.using { block(this) }
         }
     }

@@ -6,65 +6,65 @@ package com.github.adriantodt.tartar.api.lexer
  * @param T The type of tokens the lexer generates.
  * @author AdrianTodt
  */
-interface LexerContext<T> {
+public interface LexerContext<T> {
     /**
      * The original source of this context.
      */
-    val source: Source
+    public val source: Source
 
     /**
      * This context' reader.
      */
-    val reader: StringReader
+    public val reader: StringReader
 
     /**
      * The current index.
      */
-    val index: Int
+    public val index: Int
 
     /**
      * Peeks the next character of the reader.
      */
-    fun peek(): Char
+    public fun peek(): Char
 
     /**
      * Peeks a character a distance far away of the reader.
      */
-    fun peek(distance: Int): Char
+    public fun peek(distance: Int): Char
 
     /**
      * Peeks a string with a predefined length of the reader.
      */
-    fun peekString(length: Int): String
+    public fun peekString(length: Int): String
 
     /**
      * Peeks the next character and, if equals the expected character, consumes it.
      * Returns true if the peeked character were equals the expected consumer and consumed.
      */
-    fun match(expect: Char): Boolean
+    public fun match(expect: Char): Boolean
 
     /**
      * Checks if there's more characters ahead.
      */
-    fun hasNext(): Boolean
+    public fun hasNext(): Boolean
 
     /**
      * Returns the next character of the reader.
      */
-    fun next(): Char
+    public fun next(): Char
 
     /**
      * Returns a predefined length of characters of the reader, as a String.
      */
-    fun nextString(length: Int): String
+    public fun nextString(length: Int): String
 
     /**
      * Calls the [Lexer.parse]'s token consumer.
      */
-    fun process(token: T)
+    public fun process(token: T)
 
     /**
      * Lexes once and return the processed tokens.
      */
-    fun parseOnce(): List<T>
+    public fun parseOnce(): List<T>
 }

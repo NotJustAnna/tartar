@@ -1,19 +1,20 @@
 package com.github.adriantodt.tartar.impl
 
-import com.github.adriantodt.tartar.api.Closure
+import com.github.adriantodt.tartar.api.dsl.ParserFunction
+import com.github.adriantodt.tartar.api.grammar.Grammar
 import com.github.adriantodt.tartar.api.lexer.Source
 import com.github.adriantodt.tartar.api.parser.*
 
-class ParserImpl<T, E, R>(
+internal class ParserImpl<T, E, R>(
     override val grammar: Grammar<T, E>,
-    private val block: Closure<ParserContext<T, E>, R>
+    private val block: ParserFunction<T, E, R>
 ) : Parser<T, E, R> {
 
     override fun parse(source: Source, tokens: List<Token<T>>): R {
         return ContextImpl(source, tokens, grammar).block()
     }
 
-    inner class ContextImpl(
+    private inner class ContextImpl(
         override val source: Source,
         tokens: List<Token<T>>,
         override val grammar: Grammar<T, E>
@@ -81,14 +82,14 @@ class ParserImpl<T, E, R>(
             while (!eof && !nextIsAny(*type)) eat()
         }
 
-        fun parseExpr(grammar: Grammar<T, E>, precedence: Int): E {
+        private fun parseExpr(grammar: Grammar<T, E>, precedence: Int): E {
             var left: E = eat().let {
-                grammar.prefixParsers[it.type]?.parse(this, it)
+                grammar.prefix[it.type]?.parse(this, it)
                     ?: throw SyntaxException("Unexpected $it", it.section)
             }
-            while (!eof && precedence < (this.grammar.infixParsers[this.peek(0).type]?.precedence ?: 0)) {
+            while (!eof && precedence < (this.grammar.infix[this.peek(0).type]?.precedence ?: 0)) {
                 left = eat().let {
-                    grammar.infixParsers[it.type]?.parse(this, left, it)
+                    grammar.infix[it.type]?.parse(this, left, it)
                         ?: throw SyntaxException("Unexpected $it", it.section)
                 }
             }
