@@ -32,20 +32,20 @@ jobs:
         if: ${{ runner.os == 'Linux' }}
         run: gradle publish
         env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCD_USERNAME: ${{ secrets.MCD_USERNAME }}
+          MCD_PASSWORD: ${{ secrets.MCD_PASSWORD }}
       - name: Publish to GitHub Packages  (Windows)
         if: ${{ runner.os == 'Windows' }}
         run: gradle publishMingwX64PublicationToMavenRepository
         env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCD_USERNAME: ${{ secrets.MCD_USERNAME }}
+          MCD_PASSWORD: ${{ secrets.MCD_PASSWORD }}
       - name: Publish to GitHub Packages  (macOS)
         if: ${{ runner.os == 'macOS' }}
         run: gradle publishMacosX64PublicationToMavenRepository
         env:
-          USERNAME: ${{ github.actor }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MCD_USERNAME: ${{ secrets.MCD_USERNAME }}
+          MCD_PASSWORD: ${{ secrets.MCD_PASSWORD }}
 
       - name: stop gradle
         run: ./gradlew --stop
