@@ -1,6 +1,6 @@
 # tartar
 
-[![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.cafeteria.dev%2Freleases%2Fcom%2Fgithub%2Fadriantodt%2Ftartar%2Fmaven-metadata.xml)](https://maven.cafeteria.dev/releases/com/github/adriantodt/tartar)
+[![Maven metadata URL](https://img.shields.io/github/v/release/adriantodt/tartar?sort=semver)](https://maven.cafeteria.dev/releases/com/github/adriantodt/tartar)
 [![GitHub issues](https://img.shields.io/github/issues/adriantodt/tartar)](https://github.com/adriantodt/tartar/issues)
 [![License](https://img.shields.io/github/license/adriantodt/tartar)](https://github.com/adriantodt/tartar/tree/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Fgithub.com%2Fadriantodt%2Ftartar)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2Fadriantodt%2Ftartar)
