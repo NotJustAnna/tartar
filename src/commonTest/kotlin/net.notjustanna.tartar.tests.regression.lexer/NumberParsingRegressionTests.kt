@@ -33,6 +33,6 @@ class NumberParsingRegressionTests {
         assertEquals(3, list.size)
         assertEquals("A", list[0].type)
         assertEquals("B", list[1].type)
-        assertEquals("2.0", list[2].value)
+        assertEquals(2.0, list[2].value.toDoubleOrNull())
     }
 }
