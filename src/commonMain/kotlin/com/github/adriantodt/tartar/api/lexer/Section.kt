@@ -13,11 +13,12 @@ import kotlin.math.min
  */
 public data class Section(public val source: Source, public val index: Int, public val length: Int) {
     init {
-        require(index in source.bounds) {
+        val sourceBounds = source.bounds
+        require(index in sourceBounds) {
             "Section index ($index) must be within content's bounds (0..${source.content.length})"
         }
         val end = index + length
-        require(end in source.bounds) {
+        require(end in sourceBounds) {
             "Section end ($end) must be within content's bounds (0..${source.content.length})"
         }
     }
@@ -25,40 +26,33 @@ public data class Section(public val source: Source, public val index: Int, publ
     /**
      * The range of this section.
      */
-    public val range: IntRange = index..(index + length)
+    public val range: IntRange
+        get() = index..(index + length)
 
     /**
      * The substring this section represents.
      */
-    public val substring: String = source.content.substring(range)
+    public val substring: String
+        get() = source.content.substring(index, index + length)
 
     /**
      * The lines of this section.
      */
     public val lines: List<Source.Line> = source.lines
-        .dropWhile { range.first > it.range.last }
-        .takeWhile { range.last > it.range.first }
-
-
-    /**
-     * The line number of the start of the section.
-     */
-    public val startLineNumber: Int = lines.first().lineNumber
+        .dropWhile { index > it.range.last }
+        .takeWhile { (index + length) > it.range.first }
 
     /**
-     * The line index of the start of the section.
+     * The first line of this section.
      */
-    public val startLineIndex: Int = range.first - lines.first().range.first
+    public val firstLine: Source.Line
+        get() = lines.first()
 
     /**
-     * The line number of the end of the section.
+     * The last line of this section.
      */
-    public val endLineNumber: Int = lines.last().lineNumber
-
-    /**
-     * The line index of the end of the section.
-     */
-    public val endLineIndex: Int = range.last - lines.last().range.last
+    public val lastLine: Source.Line
+        get() = lines.last()
 
     /**
      * Creates a new section which spans across this and another section.
@@ -78,6 +72,6 @@ public data class Section(public val source: Source, public val index: Int, publ
      * Returns a string representation of the section.
      */
     override fun toString(): String {
-        return "(${source.name}:$startLineNumber:$startLineIndex)"
+        return "(${source.name}:${firstLine.lineNumber}:${index - firstLine.range.first})"
     }
 }
