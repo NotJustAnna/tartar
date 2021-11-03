@@ -21,9 +21,8 @@ kotlin {
         }
     }
     js(BOTH) {
-        browser {
-
-        }
+        browser()
+        nodejs()
     }
 
     val hostOs = System.getProperty("os.name")
@@ -76,8 +75,8 @@ publishing {
             url = uri("https://maven.cafeteria.dev/releases")
 
             credentials {
-                username = "${project.property("mcdUsername")}"
-                password = "${project.property("mcdPassword")}"
+                username = "${project.findProperty("mcdUsername")}"
+                password = "${project.findProperty("mcdPassword")}"
             }
             authentication {
                 create("basic", BasicAuthentication::class.java)
