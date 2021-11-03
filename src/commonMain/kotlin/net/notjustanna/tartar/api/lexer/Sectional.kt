@@ -5,14 +5,16 @@ package net.notjustanna.tartar.api.lexer
  *
  * @author An Tran
  */
-interface Sectional {
+public interface Sectional {
     /**
      * The assigned section.
      */
-    val section: Section
+    public val section: Section
 
     /**
      * Creates a section which spans across this and another section.
      */
-    fun span(other: Sectional) = section.span(other.section)
+    public fun span(other: Sectional): Section {
+        return section.span(other.section)
+    }
 }

@@ -1,17 +1,19 @@
 plugins {
-    kotlin("multiplatform") version "1.5.30"
+    kotlin("multiplatform") version "1.5.31"
     `maven-publish`
-    id("org.jetbrains.dokka") version "1.5.0"
+    id("org.jetbrains.dokka") version "1.5.31"
 }
 
 group = "net.notjustanna"
-version = "2.3"
+version = "3.0"
 
 repositories {
     mavenCentral()
 }
 
 kotlin {
+    explicitApi()
+
     jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "13"
@@ -24,10 +26,11 @@ kotlin {
         browser()
         nodejs()
     }
-
-    linuxX64("linuxX64")
-    macosX64("macosX64")
-    mingwX64("mingwX64")
+    linuxX64()
+    linuxArm64()
+    macosX64()
+    macosArm64()
+    mingwX64()
 
     sourceSets {
         val commonMain by getting
@@ -51,15 +54,20 @@ kotlin {
         val linuxX64Main by getting {
             dependsOn(nativeMain)
         }
+        val linuxArm64Main by getting {
+            dependsOn(nativeMain)
+        }
         val mingwX64Main by getting {
             dependsOn(nativeMain)
         }
         val macosX64Main by getting {
             dependsOn(nativeMain)
         }
+        val macosArm64Main by getting {
+            dependsOn(nativeMain)
+        }
     }
 }
-
 
 tasks {
     register<Jar>("dokkaJar") {
@@ -68,11 +76,12 @@ tasks {
         archiveClassifier.set("javadoc")
     }
 }
+
 publishing {
     publications.withType<MavenPublication> {
         artifact(tasks["dokkaJar"])
     }
-    // select the repositories you want to publish to
+
     repositories {
         maven {
             url = uri("https://maven.cafeteria.dev/releases")

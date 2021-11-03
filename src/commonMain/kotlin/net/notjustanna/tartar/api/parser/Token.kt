@@ -12,9 +12,11 @@ import net.notjustanna.tartar.api.lexer.Sectional
  * @param section The section of this token.
  * @author An Tran
  */
-data class Token<T>(val type: T, val value: String, override val section: Section) : Sectional {
+public data class Token<T>(public val type: T, public val value: String, override val section: Section) : Sectional {
     /**
      * Returns a string representation of the token.
      */
-    override fun toString() = "$type[$value] $section"
+    override fun toString(): String {
+        return "$type[$value] $section"
+    }
 }

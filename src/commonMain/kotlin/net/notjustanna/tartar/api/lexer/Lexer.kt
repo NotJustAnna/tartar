@@ -1,19 +1,24 @@
 package net.notjustanna.tartar.api.lexer
 
+import net.notjustanna.tartar.api.dsl.LexerConfig
+import net.notjustanna.tartar.impl.LexerImpl
+import net.notjustanna.tartar.impl.MatcherImpl
+import kotlin.jvm.JvmStatic
+
 /**
  * Reads characters from a [Source] and outputs tokens.
  *
  * @param T The type of tokens the lexer generates.
  * @author NotJustAnna
  */
-interface Lexer<T> {
+public interface Lexer<T> {
     /**
      * Parses a source and outputs tokens into a consumer.
      *
      * @param source A source of characters.
      * @param output The consumer of tokens.
      */
-    fun parse(source: Source, output: (T) -> Unit)
+    public fun parse(source: Source, output: (T) -> Unit)
 
     /**
      * Parses a source and adds all tokens into a collection.
@@ -22,7 +27,7 @@ interface Lexer<T> {
      * @param collection The collection to add all tokens into.
      * @return The collection with the tokens.
      */
-    fun <C : MutableCollection<in T>> parseTo(source: Source, collection: C): C {
+    public fun <C : MutableCollection<in T>> parseTo(source: Source, collection: C): C {
         parse(source) { collection.add(it) }
         return collection
     }
@@ -33,7 +38,22 @@ interface Lexer<T> {
      * @param source A source of characters.
      * @return A list with the tokens.
      */
-    fun parseToList(source: Source): List<T> {
+    public fun parseToList(source: Source): List<T> {
         return parseTo(source, ArrayList())
+    }
+
+    public companion object {
+        /**
+         * Creates and configures a [Lexer].
+         *
+         * @param T The type of tokens the lexer generates.
+         * @param block The lexer configurator.
+         * @return A configured Lexer.
+         * @author NotJustAnna
+         */
+        @JvmStatic
+        public fun <T> create(block: LexerConfig<T>): Lexer<T> {
+            return LexerImpl(MatcherImpl<T>().apply(block))
+        }
     }
 }
