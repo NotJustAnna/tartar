@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         # Use these Java versions
-        java: [16]
+        java: [17]
         # and run on Linux, Windows and MacOS
-        os: [ubuntu-20.04, windows-latest, macos-11]
+        os: [ubuntu-20.04, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: checkout repository
