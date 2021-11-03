@@ -22,7 +22,8 @@ public data class Source(val content: String, val name: String = "?", val path: 
     /**
      * The bounds of a given source.
      */
-    val bounds: IntRange = 0..content.length
+    val bounds: IntRange
+        get() = 0..content.length
 
     /**
      * Represents a line from the source.

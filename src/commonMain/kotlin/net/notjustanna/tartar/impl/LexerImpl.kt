@@ -91,12 +91,12 @@ internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
         override fun peek(distance: Int): Char {
             reader.mark(distance + 1)
             var value = -1
-            for (i in 0 until distance) {
+            for (i in 0..distance) {
                 val next = reader.read()
                 if (next == -1) {
                     value = -1
                     break
-                } else if (i != distance -1) {
+                } else if (i != distance) {
                     continue
                 }
                 value = next
