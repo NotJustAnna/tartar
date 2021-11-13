@@ -20,31 +20,31 @@ fun main() {
         '\n'()
 
         // Tokens
-        '+' { process(makeToken(PLUS)) }
-        '-' { process(makeToken(MINUS)) }
-        '*' { process(makeToken(TIMES)) }
-        "++" { process(makeToken(INCREMENT)) }
-        "--" { process(makeToken(DECREMENT)) }
-        '=' { process(makeToken(ASSIGN)) }
-        "==" { process(makeToken(EQ)) }
-        '>' { process(makeToken(GT)) }
-        '<' { process(makeToken(LT)) }
-        ">=" { process(makeToken(GE)) }
-        "<=" { process(makeToken(LE)) }
-        ';' { process(makeToken(SEMICOLON)) }
-        '(' { process(makeToken(LPAREN)) }
-        ')' { process(makeToken(RPAREN)) }
-        '{' { process(makeToken(LBRACKET)) }
-        '}' { process(makeToken(RBRACKET)) }
+        '+' { processToken(PLUS) }
+        '-' { processToken(MINUS) }
+        '*' { processToken(TIMES) }
+        "++" { processToken(INCREMENT, 2) }
+        "--" { processToken(DECREMENT, 2) }
+        '=' { processToken(ASSIGN) }
+        "==" { processToken(EQ, 2) }
+        '>' { processToken(GT) }
+        '<' { processToken(LT) }
+        ">=" { processToken(GE,2) }
+        "<=" { processToken(LE, 2) }
+        ';' { processToken(SEMICOLON) }
+        '(' { processToken(LPAREN) }
+        ')' { processToken(RPAREN) }
+        '{' { processToken(LBRACKET) }
+        '}' { processToken(RBRACKET) }
         matching(CharPredicate.isDigit).configure {
             when (val n = readNumber(it)) {
-                is LexicalNumber.Decimal -> process(makeToken(NUMBER, n.string))
-                is LexicalNumber.Integer -> process(makeToken(NUMBER, n.string))
+                is LexicalNumber.Decimal -> processToken(NUMBER, n.string)
+                is LexicalNumber.Integer -> processToken(NUMBER, n.string)
                 else -> throw SyntaxException("Illegal number", section(n.string.length))
             }
         }
         matching { it.isLetter() || it == '_' }.configure {
-            process(makeToken(IDENTIFIER, readIdentifier(it)))
+            processToken(IDENTIFIER, readIdentifier(it))
         }
     }
 

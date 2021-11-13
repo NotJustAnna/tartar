@@ -6,9 +6,7 @@ import com.github.adriantodt.tartar.api.lexer.Source
 import com.github.adriantodt.tartar.api.lexer.classpath
 import com.github.adriantodt.tartar.api.parser.SourceParser
 import com.github.adriantodt.tartar.api.parser.Token
-import com.github.adriantodt.tartar.extensions.ensureEOF
-import com.github.adriantodt.tartar.extensions.makeToken
-import com.github.adriantodt.tartar.extensions.readString
+import com.github.adriantodt.tartar.extensions.*
 import examples.TokenType.PLUS
 import examples.TokenType.STRING
 
@@ -21,9 +19,9 @@ fun main() {
     // Create a lexer as simple as a method call.
     val lexer = Lexer.create<Token<TokenType>> {
         // Implement a token type per line.
-        '+' { process(makeToken(PLUS)) }
+        '+' { processToken(PLUS) }
         // Built-in extension functions.
-        '"' { process(makeToken(STRING, readString(it), offset = 1)) }
+        '"' { processToken(STRING, readString(it), offset = 2) }
         // NOOP tokens.
         ' '()
         '\n'()
