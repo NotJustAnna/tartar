@@ -58,9 +58,9 @@ To create a parser use `createParser(grammar) { ... }`, which will run the block
 // Create a lexer as simple as a method call.
 val lexer = Lexer.create<Token<TokenType>> {
     // Implement a token type per line.
-    '+' { process(makeToken(PLUS)) }
+    '+' { processToken(PLUS) }
     // Built-in extension functions.
-    '"' { process(makeToken(STRING, readString(it), offset = 1)) }
+    '"' { processToken(STRING, readString(it), offset = 2) }
     // NOOP tokens.
     ' '()
     '\n'()

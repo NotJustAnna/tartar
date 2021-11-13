@@ -17,6 +17,9 @@ public data class Token<T>(public val type: T, public val value: String, overrid
      * Returns a string representation of the token.
      */
     override fun toString(): String {
+        if (value.isEmpty()) {
+            return "$type $section"
+        }
         return "$type[$value] $section"
     }
 }

@@ -6,9 +6,7 @@ import net.notjustanna.tartar.api.lexer.Source
 import net.notjustanna.tartar.api.lexer.classpath
 import net.notjustanna.tartar.api.parser.SourceParser
 import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.extensions.ensureEOF
-import net.notjustanna.tartar.extensions.makeToken
-import net.notjustanna.tartar.extensions.readString
+import net.notjustanna.tartar.extensions.*
 import examples.TokenType.PLUS
 import examples.TokenType.STRING
 
@@ -21,9 +19,9 @@ fun main() {
     // Create a lexer as simple as a method call.
     val lexer = Lexer.create<Token<TokenType>> {
         // Implement a token type per line.
-        '+' { process(makeToken(PLUS)) }
+        '+' { processToken(PLUS) }
         // Built-in extension functions.
-        '"' { process(makeToken(STRING, readString(it), offset = 1)) }
+        '"' { processToken(STRING, readString(it), offset = 2) }
         // NOOP tokens.
         ' '()
         '\n'()
