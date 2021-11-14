@@ -4,9 +4,10 @@ import net.notjustanna.tartar.api.dsl.CharPredicate
 import net.notjustanna.tartar.api.lexer.Lexer
 import net.notjustanna.tartar.api.lexer.Source
 import net.notjustanna.tartar.api.lexer.classpath
+import net.notjustanna.tartar.api.parser.StringToken
 import net.notjustanna.tartar.api.parser.SyntaxException
 import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.extensions.*
+import net.notjustanna.tartar.extensions.lexer.*
 import examples.extra.CTokenType
 import examples.extra.CTokenType.*
 
@@ -29,7 +30,7 @@ fun main() {
         "==" { processToken(EQ, 2) }
         '>' { processToken(GT) }
         '<' { processToken(LT) }
-        ">=" { processToken(GE,2) }
+        ">=" { processToken(GE, 2) }
         "<=" { processToken(LE, 2) }
         ';' { processToken(SEMICOLON) }
         '(' { processToken(LPAREN) }
@@ -49,9 +50,11 @@ fun main() {
     }
 
     val list1 = lexer.parseToList(Source.classpath { "input.c" })
-    val list2 = lexer.parseToList(Source.classpath { "input.min.c" })
+    val list2 = lexer.parseToList(Source.classpath { "input.min.c" }.copy(name = "input.c"))
 
     // Compares types and values, but not sections.
-    val isEqual = list1.zip(list2).all { (o1, o2) -> o1.type == o2.type && o1.value == o2.value }
+    val isEqual = list1.zip(list2).all { (o1, o2) ->
+        o1.type == o2.type && o1::class == o2::class && (o1 !is StringToken || o2 !is StringToken || o1.value == o2.value)
+    }
     println(isEqual)
 }

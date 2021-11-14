@@ -3,6 +3,7 @@ package net.notjustanna.tartar.api.dsl
 import net.notjustanna.tartar.api.grammar.Grammar
 import net.notjustanna.tartar.api.grammar.InfixParselet
 import net.notjustanna.tartar.api.grammar.PrefixParselet
+import net.notjustanna.tartar.api.parser.Token
 
 /**
  * A builder of [Grammars][net.notjustanna.tartar.api.parser.Grammar], as a domain-specific language (DSL).
@@ -11,14 +12,14 @@ import net.notjustanna.tartar.api.grammar.PrefixParselet
  * @param E The grammar's expression result.
  * @author NotJustAnna
  */
-public interface GrammarDSL<T, E> {
+public interface GrammarDSL<T, K : Token<T>, E> {
     /**
      * Imports all parselets from other grammars.
 
      * @param override If set to true, imported parselets overrides existing ones. If false, they throw.
      * @param grammars The grammars to import.
      */
-    public fun import(override: Boolean = false, vararg grammars: Grammar<T, E>)
+    public fun import(override: Boolean = false, vararg grammars: Grammar<T, K, E>)
 
     /**
      * Registers a prefix parselets into the grammar.
@@ -26,7 +27,7 @@ public interface GrammarDSL<T, E> {
      * @param parselet The prefix parselet to register.
      * @param override If set to true, imported parselets overrides existing ones. If false, they throw.
      */
-    public fun prefix(type: T, parselet: PrefixParselet<T, E>, override: Boolean = false)
+    public fun prefix(type: T, parselet: PrefixParselet<T, K, E>, override: Boolean = false)
 
     /**
      * Registers a prefix parselets into the grammar.
@@ -34,7 +35,7 @@ public interface GrammarDSL<T, E> {
      * @param override If set to true, imported parselets overrides existing ones. If false, they throw.
      * @param block The code to execute when the type matches.
      */
-    public fun prefix(type: T, override: Boolean = false, block: PrefixFunction<T, E>)
+    public fun prefix(type: T, override: Boolean = false, block: PrefixFunction<T, K, E>)
 
     /**
      * Registers a infix parselets into the grammar.
@@ -42,7 +43,7 @@ public interface GrammarDSL<T, E> {
      * @param parselet The infix parselet to register.
      * @param override If set to true, imported parselets overrides existing ones. If false, they throw.
      */
-    public fun infix(type: T, parselet: InfixParselet<T, E>, override: Boolean = false)
+    public fun infix(type: T, parselet: InfixParselet<T, K, E>, override: Boolean = false)
 
     /**
      * Registers a infix parselets into the grammar.
@@ -50,5 +51,5 @@ public interface GrammarDSL<T, E> {
      * @param override If set to true, imported parselets overrides existing ones. If false, they throw.
      * @param block The code to execute when the type matches.
      */
-    public fun infix(type: T, precedence: Int, override: Boolean = false, block: InfixFunction<T, E>)
+    public fun infix(type: T, precedence: Int, override: Boolean = false, block: InfixFunction<T, K, E>)
 }

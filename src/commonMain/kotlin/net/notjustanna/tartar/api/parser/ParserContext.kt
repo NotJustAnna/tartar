@@ -6,11 +6,11 @@ import net.notjustanna.tartar.api.lexer.Source
 /**
  * A parsing context, created by a [Parser.parse] call, which exposes an interface for pratt-parsing.
  *
- * @param T The parser's (and grammar's) token type.
- * @param E The parser's (and grammar's) expression result.
+ * @param T The parser's (and underlying grammar's) token type.
+ * @param E The parser's (and underlying grammar's) expression result.
  * @author NotJustAnna
  */
-public interface ParserContext<T, E> {
+public interface ParserContext<T, K: Token<T>, E> {
     /**
      * The source of this grammar's tokens.
      */
@@ -19,7 +19,7 @@ public interface ParserContext<T, E> {
     /**
      * The grammar of this parser's context.
      */
-    public val grammar: Grammar<T, E>
+    public val grammar: Grammar<T, K, E>
 
     /**
      * The current index in the list of tokens.
@@ -39,7 +39,7 @@ public interface ParserContext<T, E> {
     /**
      * Creates a child parser context with the specified grammar.
      */
-    public fun withGrammar(grammar: Grammar<T, E>): ParserContext<T, E>
+    public fun withGrammar(grammar: Grammar<T, K, E>): ParserContext<T, K, E>
 
     /**
      * Parses the expression using this parser's grammar.
@@ -49,17 +49,19 @@ public interface ParserContext<T, E> {
     /**
      * Parses the expression using another grammar.
      */
-    public fun Grammar<T, E>.parseExpression(precedence: Int = 0): E = withGrammar(grammar).parseExpression(precedence)
+    public fun Grammar<T, K, E>.parseExpression(precedence: Int = 0): E {
+        return withGrammar(grammar).parseExpression(precedence)
+    }
 
     /**
      * Eats the current token, advancing the index by one.
      */
-    public fun eat(): Token<T>
+    public fun eat(): K
 
     /**
      * Eats the current token, advancing the index by one. Throws a [SyntaxException] if the token type doesn't match.
      */
-    public fun eat(type: T): Token<T>
+    public fun eat(type: T): K
 
     /**
      * Equivalent to [nextIs], but eats the current token if true.
@@ -74,12 +76,12 @@ public interface ParserContext<T, E> {
     /**
      * Move the index backwards one token and returns it.
      */
-    public fun back(): Token<T>
+    public fun back(): K
 
     /**
      * Peeks a token a distance far away of the reader.
      */
-    public fun peek(distance: Int = 0): Token<T>
+    public fun peek(distance: Int = 0): K
 
     /**
      * Peeks the next token and if the token types are equal, returns true.
@@ -94,7 +96,7 @@ public interface ParserContext<T, E> {
     /**
      * Peeks the tokens ahead until a token of any of the types is found.
      */
-    public fun peekAheadUntil(vararg type: T): List<Token<T>>
+    public fun peekAheadUntil(vararg type: T): List<K>
 
     /**
      * Skips tokens ahead until a token of any of the types is found.

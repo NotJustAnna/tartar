@@ -4,7 +4,7 @@ import net.notjustanna.tartar.api.dsl.CharPredicate
 import net.notjustanna.tartar.api.dsl.MatchFunction
 import net.notjustanna.tartar.api.lexer.*
 import net.notjustanna.tartar.api.parser.SyntaxException
-import net.notjustanna.tartar.extensions.section
+import net.notjustanna.tartar.extensions.lexer.section
 
 internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     private val matcher = LexerMatcher(root)

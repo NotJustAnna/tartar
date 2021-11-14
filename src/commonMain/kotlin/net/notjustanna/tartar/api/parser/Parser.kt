@@ -15,11 +15,11 @@ import kotlin.jvm.JvmStatic
  * @param R The parser's result.
  * @author NotJustAnna
  */
-public interface Parser<T, E, R> {
+public interface Parser<T, K : Token<T>, E, R> {
     /**
      * The [Grammar] of this pratt-parser.
      */
-    public val grammar: Grammar<T, E>
+    public val grammar: Grammar<T, K, E>
 
     /**
      * Parses tokens with this pratt-parser and returns the computed result.
@@ -28,7 +28,7 @@ public interface Parser<T, E, R> {
      * @param tokens A list of tokens, probably created with [Lexer].
      * @return The computed result.
      */
-    public fun parse(source: Source, tokens: List<Token<T>>): R
+    public fun parse(source: Source, tokens: List<K>): R
 
     /**
      * Parses tokens from a source, using a specified lexer, with this pratt-parser, and returns the computed result.
@@ -37,7 +37,7 @@ public interface Parser<T, E, R> {
      * @param lexer A lexer to parse the source.
      * @return The computed result.
      */
-    public fun parse(source: Source, lexer: Lexer<Token<T>>): R {
+    public fun parse(source: Source, lexer: Lexer<K>): R {
         return parse(source, lexer.parseToList(source))
     }
 
@@ -54,7 +54,10 @@ public interface Parser<T, E, R> {
          * @author NotJustAnna
          */
         @JvmStatic
-        public fun <T, E, R> create(grammar: Grammar<T, E>, block: ParserFunction<T, E, R>): Parser<T, E, R> {
+        public fun <T, K : Token<T>, E, R> create(
+            grammar: Grammar<T, K, E>,
+            block: ParserFunction<T, K, E, R>
+        ): Parser<T, K, E, R> {
             return ParserImpl(grammar, block)
         }
     }

@@ -10,9 +10,9 @@ import net.notjustanna.tartar.api.parser.Token
  * @param E The grammar's expression result.
  * @author An Tran
  */
-public interface PrefixParselet<T, E> {
+public interface PrefixParselet<T, K: Token<T>, E> {
     /**
      * This prefix parser's parsing implementation.
      */
-    public fun parse(ctx: ParserContext<T, E>, token: Token<T>): E
+    public fun parse(ctx: ParserContext<T, K, E>, token: K): E
 }
