@@ -10,7 +10,7 @@ import com.github.adriantodt.tartar.api.parser.Token
  * @param E The grammar's expression result.
  * @author An Tran
  */
-public interface InfixParselet<T, E> {
+public interface InfixParselet<T, K: Token<T>, E> {
     /**
      * This infix parser's precedence.
      */
@@ -19,5 +19,5 @@ public interface InfixParselet<T, E> {
     /**
      * This infix parser's parsing implementation.
      */
-    public fun parse(ctx: ParserContext<T, E>, left: E, token: Token<T>): E
+    public fun parse(ctx: ParserContext<T, K, E>, left: E, token: K): E
 }

@@ -4,6 +4,7 @@ package com.github.adriantodt.tartar.api.dsl
  * Represents a predicate (boolean-valued function) of one [Char]-valued argument.
  *
  * @since 3.0
+ * @author AdrianTodt
  */
 public fun interface CharPredicate {
     /**
