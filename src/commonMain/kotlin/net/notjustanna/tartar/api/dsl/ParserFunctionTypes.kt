@@ -5,4 +5,4 @@ import net.notjustanna.tartar.api.parser.ParserContext
 /**
  * Function which receives a [ParserContext] as its receiver, and returns a result.
  */
-public typealias ParserFunction<T, E, R> = ParserContext<T, E>.() -> R
+public typealias ParserFunction<T, K, E, R> = ParserContext<T, K, E>.() -> R

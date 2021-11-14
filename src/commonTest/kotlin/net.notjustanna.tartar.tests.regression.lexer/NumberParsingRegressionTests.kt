@@ -3,12 +3,14 @@ package net.notjustanna.tartar.tests.regression.lexer
 import net.notjustanna.tartar.api.dsl.CharPredicate
 import net.notjustanna.tartar.api.lexer.Lexer
 import net.notjustanna.tartar.api.lexer.Source
+import net.notjustanna.tartar.api.parser.StringToken
 import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.extensions.LexicalNumber
-import net.notjustanna.tartar.extensions.processToken
-import net.notjustanna.tartar.extensions.readNumber
+import net.notjustanna.tartar.extensions.lexer.LexicalNumber
+import net.notjustanna.tartar.extensions.lexer.processToken
+import net.notjustanna.tartar.extensions.lexer.readNumber
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class NumberParsingRegressionTests {
     @Test
@@ -27,13 +29,15 @@ class NumberParsingRegressionTests {
         }
 
         val list = lexer.parseToList(Source("A B 2.0"))
-
         assertEquals(3, list.size)
-        assertEquals("A", list[0].type)
-        assertEquals("A", list[0].section.substring)
-        assertEquals("B", list[1].type)
-        assertEquals("B", list[1].section.substring)
-        assertEquals(2.0, list[2].value.toDoubleOrNull())
-        assertEquals("2.0", list[2].section.substring)
+
+        val (first, second, third) = list
+        assertEquals("A", first.type)
+        assertEquals("A", first.section?.substring)
+        assertEquals("B", second.type)
+        assertEquals("B", second.section?.substring)
+        assertIs<StringToken<String>>(third)
+        assertEquals(2.0, third.value.toDoubleOrNull())
+        assertEquals("2.0", third.section?.substring)
     }
 }

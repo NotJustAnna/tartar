@@ -5,8 +5,11 @@ import net.notjustanna.tartar.api.lexer.Lexer
 import net.notjustanna.tartar.api.lexer.Source
 import net.notjustanna.tartar.api.lexer.classpath
 import net.notjustanna.tartar.api.parser.SourceParser
+import net.notjustanna.tartar.api.parser.StringToken
 import net.notjustanna.tartar.api.parser.Token
-import net.notjustanna.tartar.extensions.*
+import net.notjustanna.tartar.extensions.parser.ensureEOF
+import net.notjustanna.tartar.extensions.lexer.processToken
+import net.notjustanna.tartar.extensions.lexer.readString
 import examples.TokenType.PLUS
 import examples.TokenType.STRING
 
@@ -28,9 +31,9 @@ fun main() {
     }
 
     // Create a pratt-parser grammar. Dead simple.
-    val grammar = Grammar.create<TokenType, String> {
+    val grammar = Grammar.create<TokenType, Token<TokenType>, String> {
         // Create a prefix parselet as a lambda function.
-        prefix(STRING) { token -> token.value }
+        prefix(STRING) { token -> (token as StringToken).value }
         // Create an infix parselet, with support to precedence as a lambda function.
         infix(PLUS, 1) { left, _ -> left + parseExpression() }
     }

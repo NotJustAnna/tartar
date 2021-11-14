@@ -1,6 +1,7 @@
 package net.notjustanna.tartar.api.grammar
 
 import net.notjustanna.tartar.api.dsl.GrammarConfig
+import net.notjustanna.tartar.api.parser.Token
 import net.notjustanna.tartar.impl.GrammarBuilder
 import kotlin.jvm.JvmStatic
 
@@ -13,9 +14,9 @@ import kotlin.jvm.JvmStatic
  * @param infix A map of prefix parsers for each token type.
  * @author An Tran
  */
-public data class Grammar<T, E>(
-    public val prefix: Map<T, PrefixParselet<T, E>>,
-    public val infix: Map<T, InfixParselet<T, E>>
+public data class Grammar<T, K : Token<T>, E>(
+    public val prefix: Map<T, PrefixParselet<T, K, E>>,
+    public val infix: Map<T, InfixParselet<T, K, E>>
 ) {
     public companion object {
         /**
@@ -28,8 +29,8 @@ public data class Grammar<T, E>(
          * @author NotJustAnna
          */
         @JvmStatic
-        public fun <T, E> create(block: GrammarConfig<T, E>): Grammar<T, E> {
-            return GrammarBuilder<T, E>().apply(block).build()
+        public fun <T, K: Token<T>, E> create(block: GrammarConfig<T, K, E>): Grammar<T, K, E> {
+            return GrammarBuilder<T, K, E>().apply(block).build()
         }
     }
 }

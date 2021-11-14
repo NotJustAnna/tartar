@@ -15,7 +15,10 @@ import net.notjustanna.tartar.api.lexer.Source
  * @param parser The underlying parser.
  * @author NotJustAnna
  */
-public data class SourceParser<T, E, R>(public val lexer: Lexer<Token<T>>, public val parser: Parser<T, E, R>) {
+public data class SourceParser<T, K : Token<T>, E, R>(
+    public val lexer: Lexer<K>,
+    public val parser: Parser<T, K, E, R>
+) {
     /**
      * Parses tokens from a source, using the bundled lexer, with this pratt-parser, and returns the computed result.
      *
@@ -39,11 +42,11 @@ public data class SourceParser<T, E, R>(public val lexer: Lexer<Token<T>>, publi
          * @return A configured Parser.
          * @author NotJustAnna
          */
-        public fun <T, E, R> create(
-            lexer: Lexer<Token<T>>,
-            grammar: Grammar<T, E>,
-            block: ParserFunction<T, E, R>
-        ): SourceParser<T, E, R> {
+        public fun <T, K: Token<T>, E, R> create(
+            lexer: Lexer<K>,
+            grammar: Grammar<T, K, E>,
+            block: ParserFunction<T, K, E, R>
+        ): SourceParser<T, K, E, R> {
             return SourceParser(lexer, Parser.create(grammar, block))
         }
     }
