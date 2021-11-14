@@ -1,11 +1,11 @@
 plugins {
-    kotlin("multiplatform") version "1.5.31"
+    kotlin("multiplatform") version "1.6.0-RC2"
     `maven-publish`
     id("org.jetbrains.dokka") version "1.5.31"
 }
 
 group = "com.github.adriantodt"
-version = "3.2.0"
+version = "4.0.0"
 
 repositories {
     mavenCentral()
@@ -69,7 +69,18 @@ kotlin {
     }
 }
 
+
 tasks {
+    dokkaHtml.configure {
+        dokkaSourceSets {
+            configureEach {
+                if (name == "commonNonJvmMain") {
+                    displayName.set("common (non-jvm)")
+                }
+                includes.from("dokka_modules.md")
+            }
+        }
+    }
     register<Jar>("dokkaJar") {
         from(dokkaHtml)
         dependsOn(dokkaHtml)

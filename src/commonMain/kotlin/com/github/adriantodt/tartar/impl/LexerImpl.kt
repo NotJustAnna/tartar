@@ -4,7 +4,7 @@ import com.github.adriantodt.tartar.api.dsl.CharPredicate
 import com.github.adriantodt.tartar.api.dsl.MatchFunction
 import com.github.adriantodt.tartar.api.lexer.*
 import com.github.adriantodt.tartar.api.parser.SyntaxException
-import com.github.adriantodt.tartar.extensions.section
+import com.github.adriantodt.tartar.extensions.lexer.section
 
 internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
     private val matcher = LexerMatcher(root)
