@@ -4,6 +4,7 @@ import com.github.adriantodt.tartar.api.dsl.CharPredicate
 import com.github.adriantodt.tartar.api.dsl.MatchFunction
 import com.github.adriantodt.tartar.api.lexer.*
 import com.github.adriantodt.tartar.api.parser.SyntaxException
+import com.github.adriantodt.tartar.exceptions.NoFurtherCharactersConsumedException
 import com.github.adriantodt.tartar.extensions.lexer.section
 
 internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
@@ -28,7 +29,7 @@ internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
                 throw SyntaxException("No matcher registered for '${section.substring}'", section)
             }
 
-            if (impl.read == 0) throw IllegalStateException("No further characters consumed.")
+            if (impl.read == 0) throw NoFurtherCharactersConsumedException()
         }
     }
 
@@ -155,7 +156,7 @@ internal class LexerImpl<T>(root: MatcherImpl<T>) : Lexer<T> {
             return mutableListOf<T>().also { doParse(this, CollectingContext(it)) }
         }
 
-        internal inline fun <R> use(block: (ContextImpl) -> R): R {
+        inline fun <R> use(block: (ContextImpl) -> R): R {
             return reader.using { block(this) }
         }
     }

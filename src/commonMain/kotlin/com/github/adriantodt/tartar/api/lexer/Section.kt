@@ -1,5 +1,6 @@
 package com.github.adriantodt.tartar.api.lexer
 
+import com.github.adriantodt.tartar.exceptions.MismatchedSourcesException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -14,12 +15,16 @@ import kotlin.math.min
 public data class Section(public val source: Source, public val index: Int, public val length: Int) {
     init {
         val sourceBounds = source.bounds
-        require(index in sourceBounds) {
-            "Section index ($index) must be within content's bounds (0..${source.content.length})"
+        if (index !in sourceBounds) {
+            throw IndexOutOfBoundsException(
+                "Section index ($index) must be within content's bounds (0..${source.content.length})"
+            )
         }
         val end = index + length
-        require(end in sourceBounds) {
-            "Section end ($end) must be within content's bounds (0..${source.content.length})"
+        if (end !in sourceBounds) {
+            throw IndexOutOfBoundsException(
+                "Section end ($end) must be within content's bounds (0..${source.content.length})"
+            )
         }
     }
 
@@ -58,8 +63,8 @@ public data class Section(public val source: Source, public val index: Int, publ
      * Creates a new section which spans across this and another section.
      */
     public fun span(other: Section): Section {
-        require(source == other.source) {
-            "Sections $this and $other have different sources and thus can't be spanned."
+        if (source != other.source) {
+            throw MismatchedSourcesException(this, other)
         }
 
         val start = min(range.first, other.range.first)

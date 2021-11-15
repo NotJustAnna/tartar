@@ -7,6 +7,7 @@ import com.github.adriantodt.tartar.api.grammar.Grammar
 import com.github.adriantodt.tartar.api.grammar.InfixParselet
 import com.github.adriantodt.tartar.api.grammar.PrefixParselet
 import com.github.adriantodt.tartar.api.parser.Token
+import com.github.adriantodt.tartar.exceptions.ConfigurationException
 
 internal class GrammarBuilder<T, K : Token<T>, E> : GrammarDSL<T, K, E> {
     private val prefix = LinkedHashMap<T, PrefixParselet<T, K, E>>()
@@ -21,7 +22,7 @@ internal class GrammarBuilder<T, K : Token<T>, E> : GrammarDSL<T, K, E> {
 
     override fun prefix(type: T, parselet: PrefixParselet<T, K, E>, override: Boolean) {
         if (!override && type in prefix) {
-            throw IllegalArgumentException("Prefix parselet associated with $type already exists. Did you forget to enable overriding?")
+            throw ConfigurationException("Prefix parselet associated with $type already exists. Did you forget to enable overriding?")
         }
         prefix[type] = parselet
     }
@@ -32,7 +33,7 @@ internal class GrammarBuilder<T, K : Token<T>, E> : GrammarDSL<T, K, E> {
 
     override fun infix(type: T, parselet: InfixParselet<T, K, E>, override: Boolean) {
         if (!override && type in infix) {
-            throw IllegalArgumentException("Infix parselet associated with $type already exists. Did you forget to enable overriding?")
+            throw ConfigurationException("Infix parselet associated with $type already exists. Did you forget to enable overriding?")
         }
         infix[type] = parselet
     }

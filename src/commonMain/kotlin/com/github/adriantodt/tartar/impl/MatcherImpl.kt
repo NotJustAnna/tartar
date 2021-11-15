@@ -1,13 +1,14 @@
 package com.github.adriantodt.tartar.impl
 
+import com.github.adriantodt.tartar.api.dsl.CharPredicate
 import com.github.adriantodt.tartar.api.dsl.LexerDSL
 import com.github.adriantodt.tartar.api.dsl.MatchFunction
-import com.github.adriantodt.tartar.api.dsl.CharPredicate
 
 internal class MatcherImpl<T> : LexerDSL<T> {
     internal class MatcherWithPredicate<T>(val predicate: CharPredicate, val matcher: MatcherImpl<T>) {
         fun isMatcherEmpty() = matcher.isEmpty()
     }
+
     val trie = LinkedHashMap<Char, MatcherImpl<T>>()
     val predicates = ArrayList<MatcherWithPredicate<T>>()
     var onMatch: MatchFunction<T>? = null
