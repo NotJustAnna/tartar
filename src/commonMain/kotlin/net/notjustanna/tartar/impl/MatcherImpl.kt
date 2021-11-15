@@ -1,13 +1,14 @@
 package net.notjustanna.tartar.impl
 
+import net.notjustanna.tartar.api.dsl.CharPredicate
 import net.notjustanna.tartar.api.dsl.LexerDSL
 import net.notjustanna.tartar.api.dsl.MatchFunction
-import net.notjustanna.tartar.api.dsl.CharPredicate
 
 internal class MatcherImpl<T> : LexerDSL<T> {
     internal class MatcherWithPredicate<T>(val predicate: CharPredicate, val matcher: MatcherImpl<T>) {
         fun isMatcherEmpty() = matcher.isEmpty()
     }
+
     val trie = LinkedHashMap<Char, MatcherImpl<T>>()
     val predicates = ArrayList<MatcherWithPredicate<T>>()
     var onMatch: MatchFunction<T>? = null
